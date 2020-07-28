@@ -1,0 +1,5 @@
+onSelectNotification:
+    Always shows 'Invalid Route'
+
+Covid:
+    Add daily notification for cases
