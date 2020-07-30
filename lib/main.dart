@@ -27,8 +27,6 @@ class MyApp extends StatelessWidget {
               FloatingActionButtonThemeData(backgroundColor: Colors.deepOrange),
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        // home: ,
-        // ! For testing purposes
         home: BusNotifierPage(),
         debugShowCheckedModeBanner: false);
   }
