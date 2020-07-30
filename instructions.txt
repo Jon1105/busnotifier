@@ -12,3 +12,5 @@ Styling:
     Covid Page icon
 
 Add Info in covid view
+
+Add multiple stop functionality
