@@ -70,6 +70,15 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
     print('Reminder Id ${reminder.notificationId}');
     List<Reminder> reminders = await readReminders();
     reminders.add(reminder);
+    reminders.sort((Reminder reminder1, Reminder reminder2) {
+      if (reminder1.time == reminder2.time) {
+        return 0;
+      } else if (reminder1.time.isAfter(reminder2.time)) {
+        return 1;
+      } else if (reminder1.time.isBefore(reminder2.time)) {
+        return -1;
+      }
+    });
     List<Map> mapReminders = remindersToMaps(reminders);
     final file = await _remindersFile;
     file.writeAsString(json.encode({"reminders": mapReminders}));
@@ -101,6 +110,7 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
         // can tap outside to dismiss
         barrierDismissible: true,
         builder: (BuildContext context) => AlertDialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
               contentPadding: EdgeInsets.fromLTRB(8, 8, 8, 2),
               title: Text('Add a reminder'),
               content: StatefulBuilder(
@@ -244,6 +254,9 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
   }
 
   void updateReminders() {
+    setState(() {
+      loading = true;
+    });
     readReminders().then((List<Reminder> readReminders) {
       setState(() {
         reminders = readReminders;
@@ -416,7 +429,9 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(20),
                                       gradient: LinearGradient(
-                                          colors: [Colors.deepOrangeAccent, Colors.orange])
+                                          colors: (reminders[index].time.isBefore(DateTime.now()))
+                                              ? [Colors.red, Colors.white24]
+                                              : [Colors.deepOrangeAccent, Colors.orange])
                                       // color: (reminders[index].time.isBefore(DateTime.now()))
                                       // ? Colors.red[200]
                                       // : Colors.white,
