@@ -354,16 +354,16 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text(
-                'Arrival times for bus ${reminder.stop.route} ${(reminder.stop.inbound) ? 'Inbound' : 'Outbound'}'),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            title: Text('${reminder.stop.route} at ${reminder.stop.name}'),
+            contentPadding: EdgeInsets.symmetric(horizontal: 24),
             content: (isValid)
                 ? Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [Text('Going towards ${reminder.stop.destination}')] +
-                        times.map((TimeOfDay time) {
-                          return Text('${time.hour}:${time.minute}');
-                        }).toList(),
+                    children: times.map((TimeOfDay time) {
+                      return Text(time.format(context));
+                    }).toList(),
                   )
                 : Text('Invalid reminder'),
             actions: <Widget>[
@@ -447,7 +447,7 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                                           style: TextStyle(color: Colors.white),
                                         ),
                                         Text(
-                                            DateFormat("EEEE dd 'at' hh:mm a")
+                                            DateFormat("EEEE MMMM dd 'at' hh:mm a")
                                                 .format(reminders[index].time),
                                             style:
                                                 TextStyle(color: Colors.grey[200], fontSize: 13)),

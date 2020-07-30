@@ -5,6 +5,7 @@ import 'package:hkinfo/CovidApp/hk.dart';
 List<Country> countries = [
   Country('Hong Kong', hkDataGetter, DateTime(2020, 1, 8), flagPath: 'assets/HK_flag.svg'),
   Country('France', () async => await owidDataGetter('France'), DateTime(2019, 12, 31)),
+  Country('Madagascar', () async => await owidDataGetter('Madagascar'), DateTime(2020, 3, 21)),
   Country(
       'United States', () async => await owidDataGetter('United States'), DateTime(2019, 12, 31)),
   Country('Afghanistan', () async => await owidDataGetter('Afghanistan'), DateTime(2019, 12, 31)),
@@ -129,7 +130,6 @@ List<Country> countries = [
   Country('Lithuania', () async => await owidDataGetter('Lithuania'), DateTime(2019, 12, 31)),
   Country('Luxembourg', () async => await owidDataGetter('Luxembourg'), DateTime(2019, 12, 31)),
   Country('Macedonia', () async => await owidDataGetter('Macedonia'), DateTime(2019, 12, 31)),
-  Country('Madagascar', () async => await owidDataGetter('Madagascar'), DateTime(2020, 3, 21)),
   Country('Malawi', () async => await owidDataGetter('Malawi'), DateTime(2020, 4, 3)),
   Country('Malaysia', () async => await owidDataGetter('Malaysia'), DateTime(2019, 12, 31)),
   Country('Maldives', () async => await owidDataGetter('Maldives'), DateTime(2020, 3, 8)),
