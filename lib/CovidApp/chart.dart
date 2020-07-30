@@ -4,11 +4,13 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import 'package:hkinfo/CovidApp/country.dart';
 import 'package:hkinfo/CovidApp/day.dart';
+import 'dart:math';
 
 class CovidChart extends StatefulWidget {
   final Map<String, dynamic> data;
   final Country country;
-  CovidChart(this.data, this.country);
+  BoxDecoration boxDeco;
+  CovidChart(this.data, this.country, this.boxDeco);
 
   @override
   _CovidChartState createState() => _CovidChartState();
@@ -16,6 +18,8 @@ class CovidChart extends StatefulWidget {
 
 class _CovidChartState extends State<CovidChart> {
   bool showingNew = false;
+  // bool deathScale = false;
+  // double _angle = pi / 8;
   List<LineChartBarData> lineBarsData = [];
 
   LineChartBarData barData(String type, Color color) {
@@ -28,6 +32,14 @@ class _CovidChartState extends State<CovidChart> {
         isStrokeCapRound: true,
         dotData: FlDotData(show: false),
         spots: widget.data['data'].map<FlSpot>((Day day) {
+          // print('Day');
+          // print('idx ${day.index}');
+          // print('tcases ${day.totalCases}');
+          // print('tdeath ${day.totalDeaths}');
+          // print('ncases ${day.newCases}');
+          // print('ndeath ${day.newDeaths}');
+          // print('day ${day.day}');
+
           if (type == 'c') {
             newValue = day.newCases;
             totalValue = day.totalCases;
@@ -37,10 +49,32 @@ class _CovidChartState extends State<CovidChart> {
           } else if (type == 'd') {
             newValue = day.newDeaths;
             totalValue = day.totalDeaths;
-          } else
+          } else {
             throw Exception();
-          return FlSpot(
-              day.index.toDouble(), (showingNew) ? newValue.toDouble() : totalValue.toDouble());
+          }
+          // if (deathScale) {
+          //   if (showingNew) {
+          //     print(widget.data['maxNewDeaths']);
+          //     if (newValue <= widget.data['maxNewDeaths']) {
+          //       return FlSpot(day.index.toDouble(), newValue.toDouble());
+          //     }
+          //   } else {
+          //     print('max total Deaths: ${widget.data['data'].last.totalDeaths}');
+          //     print('total value : ${totalValue}');
+          //     print('-');
+          //     if (totalValue <= widget.data['data'].last.totalDeaths) {
+          //       return FlSpot(day.index.toDouble(), totalValue.toDouble());
+          //     }
+          //   }
+          // } else {
+          //   return FlSpot(
+          //       day.index.toDouble(), (showingNew) ? newValue.toDouble() : totalValue.toDouble());
+          // }
+          if (showingNew) {
+            return FlSpot(day.index.toDouble(), newValue.toDouble());
+          } else {
+            return FlSpot(day.index.toDouble(), totalValue.toDouble());
+          }
         }).toList());
   }
 
@@ -52,12 +86,21 @@ class _CovidChartState extends State<CovidChart> {
     list.addAll([
       barData('d', Colors.redAccent[700]),
       barData('c', Colors.blue),
+      //
+      // LineChartBarData(colors: [Colors.transparent], spots: [FlSpot(0, 0)])
+      //
     ]);
     return list;
   }
 
   List<LineTooltipItem> getToolTipItems(List<LineBarSpot> spots) {
-    var list = [LineTooltipItem('C: ${spots[0].y.toInt()}', TextStyle())];
+    double idx = spots[0].x;
+
+    var list = [
+      // LineTooltipItem(
+      //     DateFormat('MMMd').format(DateTime.now().add(Duration(days: idx.toInt()))), TextStyle()),
+      LineTooltipItem('C: ${spots[0].y.toInt()}', TextStyle())
+    ];
     if (widget.country.hasRecovered) {
       list.add(LineTooltipItem('R: ${spots[1].y.toInt()}', TextStyle()));
     }
@@ -91,8 +134,7 @@ class _CovidChartState extends State<CovidChart> {
     return Container(
         margin: EdgeInsets.all(10),
         padding: EdgeInsets.all(15),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30),
+        decoration: widget.boxDeco.copyWith(
             gradient: LinearGradient(
                 colors: [Colors.deepPurple, Colors.deepOrange[300]],
                 begin: Alignment.bottomCenter,
@@ -101,18 +143,35 @@ class _CovidChartState extends State<CovidChart> {
           Row(
             children: <Widget>[
               IconButton(
-                  icon: Icon(Icons.loop),
+                  icon: Icon(Icons.loop, color: Colors.white),
                   onPressed: () => setState(() {
                         showingNew = !showingNew;
                         lineBarsData = getBarData();
                       })),
               Text('${(showingNew) ? 'New' : 'Total'} Cases & Deaths',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 23, color: Colors.white)),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white)),
+              // Transform.rotate(
+              //   angle: _angle,
+              //   child: IconButton(
+              //       color: Colors.white,
+              //       icon: Icon(Icons.airline_seat_flat),
+              //       onPressed: () {
+              //         setState(() {
+              //           deathScale = !deathScale;
+              //           _angle = (deathScale) ? 0 : pi / 8;
+              //           lineBarsData = getBarData();
+              //         });
+              //       }),
+              // )
             ],
           ),
           AspectRatio(
               aspectRatio: 1.5,
               child: LineChart(LineChartData(
+                  minY: 0,
+                  maxY: (showingNew)
+                      ? widget.data['maxNewCases'].toDouble()
+                      : widget.data['data'].last.totalCases.toDouble(),
                   lineTouchData: LineTouchData(
                     touchTooltipData: LineTouchTooltipData(
                         tooltipBgColor: Colors.blueGrey.withOpacity(0.5),
@@ -124,10 +183,16 @@ class _CovidChartState extends State<CovidChart> {
                       leftTitles: SideTitles(
                           textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                           getTitles: (double cases) {
-                            int max = (showingNew)
+                            int max;
+                            // if (deathScale) {
+                            //   max = (showingNew)
+                            //       ? widget.data['maxNewDeaths']
+                            //       : widget.data['data'].last.totalDeaths;
+                            // } else {
+                            max = (showingNew)
                                 ? widget.data['maxNewCases']
                                 : widget.data['data'].last.totalCases;
-                            print(max);
+                            // }
                             if (max > 1200000) {
                               return getTitles(1000000, cases, 'm');
                             } else if (max > 120000) {

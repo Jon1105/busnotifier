@@ -13,11 +13,30 @@ class CovidTracker extends StatefulWidget {
 class _CovidTrackerState extends State<CovidTracker> {
   Country country = countries[0];
 
+  String checkDate(DateTime date) {
+    var now = DateTime.now();
+    var today = DateTime(now.year, now.month, now.day);
+    if (today.isAfter(date)) {
+      if (date == today.add(Duration(days: -1))) {
+        return 'yesterday';
+      } else
+        return (today.difference(date).inDays).toString() + ' days ago';
+    } else if (today.isBefore(date)) {
+      if (date == today.add(Duration(days: 1))) {
+        return 'tommorrow';
+      } else
+        return (today.difference(date).inDays).toString() + ' days from now';
+    }
+    return 'today';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(icon: Icon(Icons.directions_bus), onPressed: Navigator.of(context).pop),
+        leading: IconButton(
+            icon: Icon(Icons.directions_bus, color: Colors.deepOrange),
+            onPressed: Navigator.of(context).pop),
         // elevation: 0,
         title: Text('${country.name} Covid'),
         actions: <Widget>[
@@ -34,7 +53,12 @@ class _CovidTrackerState extends State<CovidTracker> {
       body: FutureBuilder(
         future: country.dataGetter(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
-          BoxDecoration boxDeco = BoxDecoration(borderRadius: BorderRadius.circular(30));
+          BoxDecoration boxDeco = BoxDecoration(
+            borderRadius: BorderRadius.circular(30),
+            //     boxShadow: [
+            //   BoxShadow(offset: Offset(0.5, 3), color: Colors.black.withOpacity(0.3), blurRadius: 2)
+            // ]
+          );
           const EdgeInsets padding = EdgeInsets.all(15);
           const EdgeInsets margin = EdgeInsets.all(10);
 
@@ -42,16 +66,17 @@ class _CovidTrackerState extends State<CovidTracker> {
             return Column(
               children: <Widget>[
                 // SizedBox(height: 8),
+
                 // Chart
-                CovidChart(snapshot.data, country),
+                CovidChart(snapshot.data, country, boxDeco),
                 // Stats
                 Container(
-                    margin: margin.copyWith(top: 0),
+                    margin: margin,
                     padding: padding,
                     decoration: boxDeco.copyWith(
                         // boxShadow: [BoxShadow(offset: Offset(0, 3), color: Colors.grey[300])],
                         gradient: LinearGradient(
-                            colors: [Colors.grey[200], Colors.grey[300]],
+                            colors: [Colors.orange[300], Theme.of(context).accentColor],
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter)),
                     child: Column(
@@ -139,6 +164,18 @@ class _CovidTrackerState extends State<CovidTracker> {
                         ]),
                       ],
                     )),
+                Spacer(),
+                Container(
+                  width: double.infinity,
+                  margin: margin,
+                  padding: EdgeInsets.all(3),
+                  decoration: boxDeco.copyWith(
+                    // boxShadow: [BoxShadow(offset: Offset(0, 3), color: Colors.grey[300])],
+                    color: Colors.blueGrey[200].withOpacity(0.5),
+                  ),
+                  child: Center(
+                      child: Text('Last updated : ${checkDate(snapshot.data['data'].last.day)}')),
+                ),
               ],
             );
           } else {

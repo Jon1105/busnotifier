@@ -11,10 +11,10 @@ class Day {
   int index;
   Day(this.day,
       {@required this.index,
-      this.totalCases,
-      this.totalDeaths,
+      @required this.totalCases,
+      @required this.totalDeaths,
       this.totalRecovered,
-      this.newCases,
-      this.newDeaths,
+      @required this.newCases,
+      @required this.newDeaths,
       this.newRecovered});
 }

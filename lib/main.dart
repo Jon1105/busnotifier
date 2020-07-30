@@ -18,11 +18,13 @@ class MyApp extends StatelessWidget {
         title: 'HK Info',
         theme: ThemeData(
           fontFamily: 'Rubik',
-          primaryColor: Color(0xFF09B3A2),
-          iconTheme: IconThemeData(color: Colors.white),
+          primarySwatch: Colors.blueGrey,
+          accentColor: Colors.deepOrange,
+          iconTheme: IconThemeData(color: Colors.deepOrange),
+          backgroundColor: Colors.blueGrey[50],
           // buttonColor: ,
           buttonTheme: ButtonThemeData(buttonColor: Colors.deepOrange[300].withOpacity(0.5)),
-          appBarTheme: AppBarTheme(color: Colors.white),
+          appBarTheme: AppBarTheme(iconTheme: IconThemeData(color: Colors.deepOrange)),
           floatingActionButtonTheme:
               FloatingActionButtonThemeData(backgroundColor: Colors.deepOrange),
           visualDensity: VisualDensity.adaptivePlatformDensity,

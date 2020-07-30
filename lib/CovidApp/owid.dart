@@ -37,39 +37,4 @@ Future<Map<String, dynamic>> owidDataGetter(String name) async {
     }
   }
   throw Exception('Invalid Country');
-
-  // data.forEach((country_code, value) {
-  //   if (value['location'] == name) {
-  //     for (int i = 0; i < value['data'].length; i++) {
-  //       myList.add(Day(
-  //         DateFormat('yy-M-d').parse(value['data'][i]['date']),
-  //         index: i,
-  //         newCases: value['data'][i]['new_cases'].toInt(),
-  //         newDeaths: value['data'][i]['new_deaths'].toInt(),
-  //         totalCases: value['data'][i]['total_cases'].toInt(),
-  //         totalDeaths: value['data'][i]['total_deaths'].toInt(),
-  //       ));
-  //     }
-  //   }
-  // });
 }
-// List<Day> countryList = [];
-// print(response.body.length);
-// List rows = response.body.split('\n');
-// print(rows);
-// for (int i = 1; i < rows.length; i++) {
-//   List<String> vals = rows[i].split(',');
-//   print(vals);
-//   if (vals[2] == name) {
-//     countryList.add(Day(
-//       DateFormat('M-d-yy').parse(vals[3]),
-//       index: i,
-//       totalCases: rows[i][4].toInt(),
-//       totalDeaths: rows[i][6].toInt(),
-//       newCases: rows[i][5].toInt(),
-//       newDeaths: rows[i][7].toInt(),
-//     ));
-//   }
-// }
-// print(countryList);
-// return countryList;

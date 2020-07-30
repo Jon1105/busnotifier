@@ -385,7 +385,7 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
         // centerTitle: true,
       ),
       //  ***************************************
-      backgroundColor: Colors.grey[100],
+      // backgroundColor: Colors.grey[100],
       body: (loading)
           ? Center(child: CircularProgressIndicator())
           : RefreshIndicator(
@@ -411,24 +411,36 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                                     ),
                                   ),
                                 ),
-                                child: Card(
-                                  color: (reminders[index].time.isBefore(DateTime.now()))
-                                      ? Colors.red[200]
-                                      : Colors.white,
+                                child: Container(
+                                  margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      gradient: LinearGradient(
+                                          colors: [Colors.deepOrangeAccent, Colors.orange])
+                                      // color: (reminders[index].time.isBefore(DateTime.now()))
+                                      // ? Colors.red[200]
+                                      // : Colors.white,
+                                      ),
                                   child: Padding(
                                     padding: EdgeInsets.all(12),
                                     child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.stretch,
                                       children: <Widget>[
-                                        Text(reminders[index].stop.name),
+                                        Text(
+                                          reminders[index].stop.name,
+                                          style: TextStyle(color: Colors.white),
+                                        ),
                                         Text(
                                             DateFormat("EEEE dd 'at' hh:mm a")
                                                 .format(reminders[index].time),
-                                            style: TextStyle(color: Colors.grey, fontSize: 13)),
+                                            style:
+                                                TextStyle(color: Colors.grey[200], fontSize: 13)),
                                         Text(
                                             reminders[index].stop.route +
                                                 ' towards ' +
                                                 reminders[index].stop.destination,
-                                            style: TextStyle(color: Colors.grey, fontSize: 13))
+                                            style: TextStyle(color: Colors.grey[200], fontSize: 13))
                                       ],
                                     ),
                                   ),
