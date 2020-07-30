@@ -1,4 +1,4 @@
-package com.example.busnotifier
+package com.example.hkinfo
 
 import io.flutter.embedding.android.FlutterActivity
 
