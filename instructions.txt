@@ -1,5 +1,14 @@
-onSelectNotification:
-    Always shows 'Invalid Route'
+Add daily notification for hk cases???
 
-Covid:
-    Add daily notification for cases
+Change countries.dart to json file
+
+Bus Notifier Card Styling:
+    Full width
+    Rounded Corners
+
+Styling:
+    AppBar color
+    Color theme
+    Covid Page icon
+
+Add Info in covid view

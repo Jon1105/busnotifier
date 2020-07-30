@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'stopClass.dart';
+import 'package:hkinfo/BusNotifierApp/stopClass.dart';
 
 class StopsSearch extends SearchDelegate<Stop> {
   final List<Map<String, String>> allStops;
@@ -7,44 +7,16 @@ class StopsSearch extends SearchDelegate<Stop> {
 
   @override
   List<Widget> buildActions(BuildContext context) {
-    return [
-      IconButton(
-        icon: Icon(Icons.clear),
-        onPressed: () => query = '',
-      )
-    ];
+    return [IconButton(icon: Icon(Icons.clear), onPressed: () => query = '')];
   }
 
   @override
   Widget buildLeading(BuildContext context) {
-    return IconButton(
-        icon: Icon(Icons.arrow_back), onPressed: () => close(context, null));
+    return IconButton(icon: Icon(Icons.arrow_back), onPressed: () => close(context, null));
   }
 
   @override
-  Widget buildResults(BuildContext context) {
-    List<Map<String, String>> mapResults =
-        allStops.where((Map<String, String> stopMap) {
-      return stopMap['name'].toLowerCase() == query.toLowerCase();
-    }).toList();
-    return ListView(
-      children: mapResults.map((Map<String, String> stopMap) {
-        return ListTile(
-          onTap: () => close(
-              context,
-              Stop(stopMap['id'], stopMap['name'], stopMap['route'],
-                  stopMap['direction'], stopMap['destination'])),
-          title: Text(stopMap['name']),
-          subtitle: Column(
-            children: <Widget>[
-              Text('Route: ${stopMap['route']}'),
-              Text('To: ${stopMap['destination']}')
-            ],
-          ),
-        );
-      }).toList(),
-    );
-  }
+  Widget buildResults(BuildContext context) => Container();
 
   @override
   Widget buildSuggestions(BuildContext context) {
@@ -60,8 +32,7 @@ class StopsSearch extends SearchDelegate<Stop> {
             itemCount: stops.length,
             itemBuilder: (BuildContext context, int index) {
               Map stopMap = stops[index];
-              Stop stop = Stop(stopMap['id'], stopMap['name'], stopMap['route'],
-                  stopMap['direction'], stopMap['destination']);
+              Stop stop = Stop.fromMap(stopMap);
               return ListTile(
                 onTap: () {
                   close(context, stop);

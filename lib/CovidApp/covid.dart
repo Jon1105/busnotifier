@@ -1,32 +1,38 @@
-import 'package:busnotifier/CovidApp/chart.dart';
+import 'package:hkinfo/CovidApp/chart.dart';
 import 'package:flutter/material.dart';
-import 'country.dart';
-import 'parser.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hkinfo/CovidApp/country.dart';
+import 'package:hkinfo/CovidApp/parser.dart';
+import 'package:hkinfo/CovidApp/countries.dart';
+import 'package:hkinfo/CovidApp/countrySearch.dart';
 
-class CovidTracker extends StatelessWidget {
-  final Country country;
-  CovidTracker(this.country);
+class CovidTracker extends StatefulWidget {
+  @override
+  _CovidTrackerState createState() => _CovidTrackerState();
+}
+
+class _CovidTrackerState extends State<CovidTracker> {
+  Country country = countries[0];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          elevation: 0,
-          title: Row(
-            children: <Widget>[
-              Text('${country.name} Covid Tracker'),
-              Spacer(),
-              Container(
-                color: Colors.black,
-                child: SvgPicture.asset(country.flagPath),
-                height: 40,
-                width: 60,
-              )
-            ],
-          )),
+        leading: IconButton(icon: Icon(Icons.directions_bus), onPressed: Navigator.of(context).pop),
+        // elevation: 0,
+        title: Text('${country.name} Covid'),
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(Icons.search),
+              onPressed: () async {
+                var cntry = await showSearch(context: context, delegate: CountrySearch(countries));
+                if (cntry != null) {
+                  setState(() => country = cntry);
+                }
+              })
+        ],
+      ),
       body: FutureBuilder(
-        future: country.totalDataGetter(),
+        future: country.dataGetter(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           BoxDecoration boxDeco = BoxDecoration(borderRadius: BorderRadius.circular(30));
           const EdgeInsets padding = EdgeInsets.all(15);
@@ -37,23 +43,7 @@ class CovidTracker extends StatelessWidget {
               children: <Widget>[
                 // SizedBox(height: 8),
                 // Chart
-                Container(
-                  margin: margin,
-                  padding: padding,
-                  decoration: boxDeco.copyWith(
-                      gradient: LinearGradient(
-                          colors: [Colors.deepPurple, Colors.purple],
-                          begin: Alignment.bottomCenter,
-                          end: Alignment.topCenter)),
-                  child: Column(
-                    children: <Widget>[
-                      Text('Total Cases & Deaths',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 25, color: Colors.white)),
-                      AspectRatio(aspectRatio: 1.5, child: CovidChart(snapshot.data, country)),
-                    ],
-                  ),
-                ),
+                CovidChart(snapshot.data, country),
                 // Stats
                 Container(
                     margin: margin.copyWith(top: 0),
@@ -66,125 +56,89 @@ class CovidTracker extends StatelessWidget {
                             end: Alignment.bottomCenter)),
                     child: Column(
                       children: <Widget>[
-                        Stack(
-                          children: <Widget>[
-                            Align(
-                                alignment: Alignment.centerLeft,
+                        Row(children: <Widget>[
+                          Flexible(
+                              fit: FlexFit.tight,
+                              child: Center(
                                 child: Text('Confirmed',
+                                    style:
+                                        TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
+                              )),
+                          (country.hasRecovered)
+                              ? Flexible(
+                                  fit: FlexFit.tight,
+                                  child: Center(
+                                    child: Text('Recovered',
+                                        style: TextStyle(
+                                            color: Colors.green[300], fontWeight: FontWeight.bold)),
+                                  ))
+                              : Container(),
+                          Flexible(
+                              fit: FlexFit.tight,
+                              child: Center(
+                                child: Text('Deaths',
                                     style: TextStyle(
-                                        color: Colors.blue, fontWeight: FontWeight.bold))),
-                            Align(
-                                alignment: Alignment.center,
-                                child: Text('Recovered',
-                                    style: TextStyle(
-                                        color: Colors.green[300], fontWeight: FontWeight.bold))),
-                            Align(
-                                alignment: Alignment.centerRight,
-                                child: Text('Dead',
-                                    style: TextStyle(
-                                        color: Colors.redAccent[700],
-                                        fontWeight: FontWeight.bold))),
-                          ],
-                        ),
+                                        color: Colors.redAccent[700], fontWeight: FontWeight.bold)),
+                              )),
+                        ]),
                         Text('Total'),
-                        Stack(
-                          // mainAxisSize: MainAxisSize.max,
-                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(numParse(snapshot.data.last.totalCases),
-                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
-                            ),
-                            Align(
-                              alignment: Alignment.center,
-                              child: Text(numParse(snapshot.data.last.totalRecovered),
-                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
-                            ),
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: Text(numParse(snapshot.data.last.totalDeaths),
-                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
-                            )
-                          ],
-                        ),
+                        Row(children: <Widget>[
+                          Flexible(
+                              child: Center(
+                                child: Text(numParse(snapshot.data['data'].last.totalCases),
+                                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 25)),
+                              ),
+                              fit: FlexFit.tight),
+                          (country.hasRecovered)
+                              ? Flexible(
+                                  child: Center(
+                                    child: Text(
+                                      numParse(snapshot.data['data'].last.totalRecovered),
+                                      style: TextStyle(fontWeight: FontWeight.w500, fontSize: 25),
+                                    ),
+                                  ),
+                                  fit: FlexFit.tight)
+                              : Container(),
+                          Flexible(
+                              child: Center(
+                                child: Text(
+                                  numParse(snapshot.data['data'].last.totalDeaths),
+                                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 25),
+                                ),
+                              ),
+                              fit: FlexFit.tight),
+                        ]),
                         // Divider(),
                         SizedBox(height: 10),
                         Text('New'),
-                        Stack(
-                          // mainAxisSize: MainAxisSize.max,
-                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                  numParse(snapshot.data[snapshot.data.length - 1].totalCases -
-                                      snapshot.data[snapshot.data.length - 2].totalCases),
-                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
-                            ),
-                            Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                numParse(snapshot.data[snapshot.data.length - 1].totalRecovered -
-                                    snapshot.data[snapshot.data.length - 2].totalRecovered),
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+                        Row(children: <Widget>[
+                          Flexible(
+                              child: Center(
+                                child: Text(numParse(snapshot.data['data'].last.newCases),
+                                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 25)),
                               ),
-                            ),
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: Text(
-                                numParse(snapshot.data[snapshot.data.length - 1].totalDeaths -
-                                    snapshot.data[snapshot.data.length - 2].totalDeaths),
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+                              fit: FlexFit.tight),
+                          (country.hasRecovered)
+                              ? Flexible(
+                                  child: Center(
+                                    child: Text(
+                                      numParse(snapshot.data['data'].last.newRecovered),
+                                      style: TextStyle(fontWeight: FontWeight.w500, fontSize: 25),
+                                    ),
+                                  ),
+                                  fit: FlexFit.tight)
+                              : Container(),
+                          Flexible(
+                              child: Center(
+                                child: Text(
+                                  numParse(snapshot.data['data'].last.newDeaths),
+                                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 25),
+                                ),
                               ),
-                            )
-                          ],
-                        )
+                              fit: FlexFit.tight),
+                        ]),
                       ],
                     )),
-                // Container(
-                //   margin: margin.copyWith(top: 0),
-                //   padding: padding,
-                //   decoration: boxDeco.copyWith(gradient: Linear),
-                //   child: Row(
-                //     mainAxisSize: MainAxisSize.max,
-                //     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                //     children: <Widget>[
-                //       Column(
-                //         children: <Widget>[
-                //           Text('New Cases', style: TextStyle(color: Colors.blue)),
-                //           Text(
-                //               (snapshot.data[snapshot.data.length - 1].totalCases -
-                //                       snapshot.data[snapshot.data.length - 2].totalCases)
-                //                   .toString(),
-                //               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30))
-                //         ],
-                //       ),
-                //       Column(
-                //         children: <Widget>[
-                //           Text('New Recovered', style: TextStyle(color: Colors.green[300])),
-                //           Text(
-                //             (snapshot.data[snapshot.data.length - 1].totalRecovered -
-                //                     snapshot.data[snapshot.data.length - 2].totalRecovered)
-                //                 .toString(),
-                //             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
-                //           )
-                //         ],
-                //       ),
-                //       Column(
-                //         children: <Widget>[
-                //           Text('New Deaths', style: TextStyle(color: Colors.redAccent[700])),
-                //           Text(
-                //             (snapshot.data[snapshot.data.length - 1].totalDeaths -
-                //                     snapshot.data[snapshot.data.length - 2].totalDeaths)
-                //                 .toString(),
-                //             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
-                //           )
-                //         ],
-                //       ),
-                //     ],
-                //   ),
-                // ),
               ],
             );
           } else {

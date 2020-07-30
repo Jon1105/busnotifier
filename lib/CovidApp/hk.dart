@@ -1,15 +1,9 @@
-import 'country.dart';
-import 'day.dart';
+import 'package:hkinfo/CovidApp/day.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'dart:convert';
 
-final Country hk = Country('Hong Kong', hkTotalData, () async {
-  var data = await hkTotalData();
-  return hkNewData(data);
-}, 'assets/HK_flag.svg', startDate: DateTime(2020, 1, 8));
-
-Future<List<Day>> hkTotalData() async {
+Future<Map<String, dynamic>> hkDataGetter() async {
   String url =
       'https://api.data.gov.hk/v2/filter?q=%7B%22resource%22%3A%22http%3A%2F%2Fwww.chp.gov.hk%2Ffiles%2Fmisc%2Flatest_situation_of_reported_cases_covid_19_eng.csv%22%2C%22section%22%3A1%2C%22format%22%3A%22json%22%7D';
 
@@ -18,36 +12,40 @@ Future<List<Day>> hkTotalData() async {
     return null;
   }
   List mapDays = json.decode(response.body);
-  return List.generate(
-      mapDays.length,
-      (int index) => Day(DateFormat('d/M/yyyy').parse(mapDays[index]['As of date']),
-          totalCases: mapDays[index]['Number of confirmed cases'],
-          totalDeaths: mapDays[index]['Number of death cases'],
-          totalRecovered: mapDays[index]['Number of discharge cases'],
-          index: index));
+  List<Day> returnList = [];
+  int maxNewCases = 0;
+  int maxNewDeaths = 0;
+  int maxNewRecovered = 0;
+  for (int i = 0; i < mapDays.length; i++) {
+    int newCases = (i == 0)
+        ? mapDays[i]['Number of confirmed cases']
+        : mapDays[i]['Number of confirmed cases'] - mapDays[i - 1]['Number of confirmed cases'];
+    int newDeaths = (i == 0)
+        ? mapDays[i]['Number of death cases']
+        : mapDays[i]['Number of death cases'] - mapDays[i - 1]['Number of death cases'];
+    int newRecovered = (i == 0)
+        ? mapDays[i]['Number of discharge cases']
+        : mapDays[i]['Number of discharge cases'] - mapDays[i - 1]['Number of discharge cases'];
+    returnList.add(Day(
+      DateFormat('d/M/yyyy').parse(mapDays[i]['As of date']),
+      index: i,
+      totalCases: mapDays[i]['Number of confirmed cases'],
+      totalDeaths: mapDays[i]['Number of death cases'],
+      totalRecovered: mapDays[i]['Number of discharge cases'],
+      newCases: newCases,
+      newDeaths: newDeaths,
+      newRecovered: newRecovered,
+    ));
+    if (newCases > maxNewCases) {
+      maxNewCases = newCases;
+    }
+    if (newDeaths > maxNewDeaths) {
+      maxNewDeaths = newDeaths;
+    }
+    if (newRecovered > maxNewRecovered) {
+      maxNewRecovered = newRecovered;
+    }
+  }
 
-  // return mapDays.map((day) {
-  //   return Day(
-  //     DateFormat('d/M/yyyy').parse(day['As of date']),
-  //     totalCases: day['Number of confirmed cases'],
-  //     totalDeaths: day['Number of death cases'],
-  //   );
-  // }).toList();
-}
-
-List<Day> hkNewData(List<Day> data) {
-  return List.generate(data.length, (index) {
-    Day day = data[index];
-    return Day(day.day,
-        index: day.index,
-        newCases: (day.index == 0) ? day.totalCases : day.totalCases - data[index - 1].totalCases,
-        newDeaths:
-            (day.index == 0) ? day.totalDeaths : day.totalDeaths - data[index - 1].totalDeaths,
-        newRecovered: (day.index == 0)
-            ? day.totalRecovered
-            : day.totalRecovered - data[index - 1].totalRecovered,
-        totalCases: day.totalCases,
-        totalDeaths: day.totalDeaths,
-        totalRecovered: day.totalRecovered);
-  });
+  return {'data': returnList, 'maxNewCases': maxNewCases, 'maxNewDeaths': maxNewDeaths};
 }

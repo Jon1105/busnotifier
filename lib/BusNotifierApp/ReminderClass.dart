@@ -1,4 +1,4 @@
-import 'stopClass.dart';
+import 'package:hkinfo/BusNotifierApp/stopClass.dart';
 
 class Reminder {
   DateTime time;

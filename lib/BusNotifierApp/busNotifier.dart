@@ -5,15 +5,12 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:math';
-import 'package:flutter/services.dart';
-import 'pickStop.dart';
-import 'stopClass.dart';
-import 'ReminderClass.dart';
-import 'stops.dart';
-import 'package:analog_clock/analog_clock.dart';
+import 'package:hkinfo/BusNotifierApp/pickStop.dart';
+import 'package:hkinfo/BusNotifierApp/stopClass.dart';
+import 'package:hkinfo/BusNotifierApp/ReminderClass.dart';
+import 'package:hkinfo/BusNotifierApp/stops.dart';
 import 'package:http/http.dart' as http;
-
-
+import 'package:hkinfo/CovidApp/covid.dart';
 
 class BusNotifierPage extends StatefulWidget {
   @override
@@ -21,6 +18,7 @@ class BusNotifierPage extends StatefulWidget {
 }
 
 class _BusNotifierPageState extends State<BusNotifierPage> {
+  bool loading = true;
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   List<Reminder> reminders = [];
 
@@ -81,8 +79,7 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
     final file = await _remindersFile;
     reminders = await readReminders();
     try {
-      await flutterLocalNotificationsPlugin
-          .cancel(reminders.elementAt(index).notificationId);
+      await flutterLocalNotificationsPlugin.cancel(reminders.elementAt(index).notificationId);
     } catch (_) {
       print('No notification scheduled');
     }
@@ -117,14 +114,14 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                           Column(
                             children: <Widget>[
                               RaisedButton(
+                                elevation: 0,
                                 child: Text('Pick Date'),
                                 onPressed: () async {
                                   var result = await showDatePicker(
                                       context: context,
                                       initialDate: now,
                                       firstDate: now,
-                                      lastDate:
-                                          now.add(Duration(days: 30 * 6)));
+                                      lastDate: now.add(Duration(days: 30 * 6)));
                                   if (result != null) {
                                     setState(() {
                                       dayPick = result;
@@ -134,18 +131,18 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                               ),
                               Text(
                                 DateFormat('EEEE dd').format(dayPick),
-                                style: TextStyle(
-                                    fontStyle: FontStyle.italic, fontSize: 14),
+                                style: TextStyle(fontStyle: FontStyle.italic, fontSize: 14),
                               ),
                             ],
                           ),
                           Column(
                             children: <Widget>[
                               RaisedButton(
+                                elevation: 0,
                                 child: Text('Pick Time'),
                                 onPressed: () async {
-                                  var result = await showTimePicker(
-                                      context: context, initialTime: timePick);
+                                  var result =
+                                      await showTimePicker(context: context, initialTime: timePick);
                                   if (result != null) {
                                     setState(() {
                                       timePick = result;
@@ -154,9 +151,7 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                                 },
                               ),
                               Text('${timePick.hour}:${timePick.minute}',
-                                  style: TextStyle(
-                                      fontStyle: FontStyle.italic,
-                                      fontSize: 14))
+                                  style: TextStyle(fontStyle: FontStyle.italic, fontSize: 14))
                             ],
                           )
                         ],
@@ -165,9 +160,11 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                         height: 3,
                       ),
                       RaisedButton(
+                        padding: EdgeInsets.all(0),
+                        elevation: 0,
                         onPressed: () async {
-                          var result = await showSearch(
-                              context: context, delegate: StopsSearch(stops));
+                          var result =
+                              await showSearch(context: context, delegate: StopsSearch(stops));
                           if (result != null) {
                             setState(() {
                               stop = result;
@@ -186,11 +183,9 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                                   stop.name,
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
-                              style: TextStyle(
-                                  fontStyle: FontStyle.italic, fontSize: 14))
+                              style: TextStyle(fontStyle: FontStyle.italic, fontSize: 14))
                           : Text('No stop selected',
-                              style: TextStyle(
-                                  fontStyle: FontStyle.italic, fontSize: 14)),
+                              style: TextStyle(fontStyle: FontStyle.italic, fontSize: 14)),
                       (message != '')
                           ? Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -198,9 +193,7 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                                 Icon(Icons.warning, color: Colors.red),
                                 Text(
                                   message,
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontWeight: FontWeight.bold),
+                                  style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
                                 ),
                               ],
                             )
@@ -214,18 +207,12 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                           FlatButton(
                             onPressed: Navigator.of(context).pop,
                             child: Text('Cancel',
-                                style: TextStyle(
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.bold)),
+                                style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
                           ),
                           FlatButton(
                             onPressed: () async {
-                              DateTime returnDate = DateTime(
-                                  dayPick.year,
-                                  dayPick.month,
-                                  dayPick.day,
-                                  timePick.hour,
-                                  timePick.minute);
+                              DateTime returnDate = DateTime(dayPick.year, dayPick.month,
+                                  dayPick.day, timePick.hour, timePick.minute);
                               if (stop == null) {
                                 setState(() {
                                   message = 'Select a stop';
@@ -239,15 +226,13 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                                 print('Writing Reminder');
 
                                 print(returnDate);
-                                await writeReminder(Reminder(returnDate, stop,
-                                    Random().nextInt(pow(10, 6))));
+                                await writeReminder(
+                                    Reminder(returnDate, stop, Random().nextInt(pow(10, 6))));
                                 updateReminders();
                               }
                             },
                             child: Text('Add',
-                                style: TextStyle(
-                                    color: Colors.blue,
-                                    fontWeight: FontWeight.bold)),
+                                style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
                           )
                         ],
                       ),
@@ -262,6 +247,7 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
     readReminders().then((List<Reminder> readReminders) {
       setState(() {
         reminders = readReminders;
+        loading = false;
       });
     });
   }
@@ -361,17 +347,14 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                 ? Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children:
-                        [Text('Going towards ${reminder.stop.destination}')] +
-                            times.map((TimeOfDay time) {
-                              return Text('${time.hour}:${time.minute}');
-                            }).toList(),
+                    children: [Text('Going towards ${reminder.stop.destination}')] +
+                        times.map((TimeOfDay time) {
+                          return Text('${time.hour}:${time.minute}');
+                        }).toList(),
                   )
                 : Text('Invalid reminder'),
             actions: <Widget>[
-              FlatButton(
-                  child: Text('Ok'),
-                  onPressed: () => Navigator.of(context).pop())
+              FlatButton(child: Text('Ok'), onPressed: () => Navigator.of(context).pop())
             ],
           );
         });
@@ -383,15 +366,19 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.menu),
-          onPressed: null,
-        ),
-        title: Row(
-          children: <Widget>[
-            Text('Bus Notifier'),
-            Spacer(),
-            Icon(Icons.directions_bus)
-          ],
+            icon: Icon(Icons.person),
+            onPressed: () => Navigator.of(context).push(PageRouteBuilder(
+                pageBuilder: (context, animation, secondaryAnimation) => CovidTracker(),
+                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                  var tween = Tween(begin: Offset(1, 0), end: Offset.zero);
+                  return SlideTransition(
+                    position: animation.drive(tween),
+                    child: child,
+                  );
+                }))),
+        title: Text(
+          'Bus Notifier',
+          style: TextStyle(fontFamily: 'Rubik'),
         ),
         elevation: 0,
         // actions: <Widget>[Icon(Icons.directions_bus)],
@@ -399,117 +386,71 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
       ),
       //  ***************************************
       backgroundColor: Colors.grey[100],
-      body: RefreshIndicator(
-        onRefresh: refreshReminders,
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: MediaQuery.of(context).size.height -
-                  MediaQuery.of(context).padding.top -
-                  kToolbarHeight,
-              child: ListView(
-                children: List.generate(
-                  reminders.length,
-                  (index) => Dismissible(
-                    key: UniqueKey(),
-                    background: Container(
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Icon(
-                          Icons.delete,
-                          color: Colors.red,
-                        ),
-                      ),
-                    ),
-                    child: Card(
-                      color: (reminders[index].time.isBefore(DateTime.now()))
-                          ? Colors.red[200]
-                          : Colors.white,
-                      elevation: 0,
-                      child: Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: Row(
-                          children: <Widget>[
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width - 90,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    reminders[index].stop.name,
-                                    // overflow: TextOverflow.fade,
+      body: (loading)
+          ? Center(child: CircularProgressIndicator())
+          : RefreshIndicator(
+              onRefresh: refreshReminders,
+              child: Column(
+                children: <Widget>[
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height -
+                        MediaQuery.of(context).padding.top -
+                        kToolbarHeight,
+                    child: (reminders.isNotEmpty)
+                        ? ListView(
+                            children: List.generate(
+                              reminders.length,
+                              (index) => Dismissible(
+                                key: UniqueKey(),
+                                background: Container(
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Icon(
+                                      Icons.delete,
+                                      color: Colors.red,
+                                    ),
                                   ),
-                                  Text(
-                                    DateFormat("EEEE dd 'at' hh:mm a")
-                                        .format(reminders[index].time),
-                                    style: TextStyle(
-                                        color: Colors.grey, fontSize: 13),
-                                  ),
-                                  FittedBox(
-                                    child: Row(
+                                ),
+                                child: Card(
+                                  color: (reminders[index].time.isBefore(DateTime.now()))
+                                      ? Colors.red[200]
+                                      : Colors.white,
+                                  child: Padding(
+                                    padding: EdgeInsets.all(12),
+                                    child: Column(
                                       children: <Widget>[
-                                        Icon(Icons.directions_bus,
-                                            size: 13, color: Colors.grey),
+                                        Text(reminders[index].stop.name),
+                                        Text(
+                                            DateFormat("EEEE dd 'at' hh:mm a")
+                                                .format(reminders[index].time),
+                                            style: TextStyle(color: Colors.grey, fontSize: 13)),
                                         Text(
                                             reminders[index].stop.route +
                                                 ' towards ' +
-                                                reminders[index]
-                                                    .stop
-                                                    .destination,
-                                            style: TextStyle(
-                                                color: Colors.grey,
-                                                fontSize: 13))
+                                                reminders[index].stop.destination,
+                                            style: TextStyle(color: Colors.grey, fontSize: 13))
                                       ],
                                     ),
-                                  )
-                                ],
+                                  ),
+                                ),
+                                //
+                                direction: DismissDirection.startToEnd,
+                                onDismissed: (DismissDirection direction) async {
+                                  await deleteReminder(index);
+                                  print('Reminder removed');
+                                  updateReminders();
+                                },
                               ),
                             ),
-                            SizedBox(
-                              height: 50,
-                              width: 50,
-                              child: AnalogClock(
-                                decoration: BoxDecoration(
-                                  // color: Colors.grey[50],
-                                  shape: BoxShape.circle,
-                                  // border: Border.all(
-                                  //     width: 0.5, color: Colors.grey[600])
-                                ),
-                                hourHandColor: Colors.black87,
-                                minuteHandColor: Colors.black54,
-                                width: 50,
-                                showDigitalClock: false,
-                                showSecondHand: false,
-                                showNumbers: false,
-                                datetime: reminders[index].time,
-                                showTicks: false,
-                              ),
-                            )
-                          ],
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        ),
-                      ),
-                      // // Using intl package to format
-                      // title: Text(DateFormat("EEEE dd 'at' hh:mm a")
-                      //     .format(reminders[index].time)),
-                      // subtitle: Text('Bus ' + reminders[index].stop.route),
-                    ),
-                    direction: DismissDirection.startToEnd,
-                    onDismissed: (DismissDirection direction) async {
-                      await deleteReminder(index);
-                      print('Reminder removed');
-                      updateReminders();
-                    },
+                          )
+                        : Center(child: Text('No reminders set')),
                   ),
-                ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
       // ****************************************
-      floatingActionButton: FloatingActionButton(
-          onPressed: () => createReminder(context), child: Icon(Icons.add)),
+      floatingActionButton:
+          FloatingActionButton(onPressed: () => createReminder(context), child: Icon(Icons.add)),
     );
   }
 }
