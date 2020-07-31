@@ -304,22 +304,7 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
         payload: json.encode(mapFromReminder(reminder)));
   }
 
-  @override
-  void initState() {
-    super.initState();
-    // Reminder Functionality
-    updateReminders();
-    print(reminders);
-
-    // Notifications
-    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    var android = AndroidInitializationSettings('@mipmap/ic_launcher');
-    var iOS = IOSInitializationSettings();
-
-    var initSettings = InitializationSettings(android, iOS);
-    flutterLocalNotificationsPlugin.initialize(initSettings,
-        onSelectNotification: onSelectNotification);
-  }
+  
 
   Future<List<TimeOfDay>> getTimes(Stop stop) async {
     String url =
@@ -372,6 +357,22 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
           );
         });
     return null;
+  }
+  @override
+  void initState() {
+    super.initState();
+    // Reminder Functionality
+    updateReminders();
+    print(reminders);
+
+    // Notifications
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    var android = AndroidInitializationSettings('@mipmap/ic_launcher');
+    var iOS = IOSInitializationSettings();
+
+    var initSettings = InitializationSettings(android, iOS);
+    flutterLocalNotificationsPlugin.initialize(initSettings,
+        onSelectNotification: onSelectNotification);
   }
 
   @override

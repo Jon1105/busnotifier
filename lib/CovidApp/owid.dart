@@ -2,12 +2,24 @@ import 'package:hkinfo/CovidApp/day.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'dart:convert';
+import 'dart:io';
 
 Future<Map<String, dynamic>> owidDataGetter(String name) async {
   String url = 'https://covid.ourworldindata.org/data/owid-covid-data.json';
-  http.Response response = await http.get(url);
-  if (response.statusCode != 200) {
-    throw Exception('Failed http request\nError: ${response.statusCode}');
+  http.Response response;
+  try {
+    response = await http.get(url);
+    if (response.statusCode != 200) {
+      return {
+        'errorMsg': 'Something went wrong',
+        'error': 0,
+        'statusCode': response.statusCode
+      };
+    }
+  } on SocketException catch (error) {
+    return {'errorMsg': 'No internet Connection', 'error': error};
+  } catch (error) {
+    return {'error': error, 'errorMsg': 'Something went wrong',};
   }
   var data = json.decode(response.body);
   List<Day> myList = [];
@@ -33,7 +45,12 @@ Future<Map<String, dynamic>> owidDataGetter(String name) async {
           maxNewDeaths = newDeaths;
         }
       }
-      return {'data': myList, 'maxNewCases': maxNewCases, 'maxNewDeaths': maxNewDeaths};
+      return {
+        'data': myList,
+        'maxNewCases': maxNewCases,
+        'maxNewDeaths': maxNewDeaths,
+        'error': null
+      };
     }
   }
   throw Exception('Invalid Country');

@@ -2,14 +2,26 @@ import 'package:hkinfo/CovidApp/day.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'dart:convert';
+import 'dart:io';
 
 Future<Map<String, dynamic>> hkDataGetter() async {
   String url =
       'https://api.data.gov.hk/v2/filter?q=%7B%22resource%22%3A%22http%3A%2F%2Fwww.chp.gov.hk%2Ffiles%2Fmisc%2Flatest_situation_of_reported_cases_covid_19_eng.csv%22%2C%22section%22%3A1%2C%22format%22%3A%22json%22%7D';
 
-  http.Response response = await http.get(url);
-  if (response.statusCode != 200) {
-    return null;
+  http.Response response;
+  try {
+    response = await http.get(url);
+    if (response.statusCode != 200) {
+      return {
+        'errorMsg': 'Something went wrong.',
+        'error': 0,
+        'statusCode': response.statusCode
+      };
+    }
+  } on SocketException catch (error) {
+    return {'errorMsg': 'No internet Connection', 'error': error};
+  } catch (error) {
+    return {'error': error};
   }
   List mapDays = json.decode(response.body);
   List<Day> returnList = [];
@@ -47,5 +59,10 @@ Future<Map<String, dynamic>> hkDataGetter() async {
     }
   }
 
-  return {'data': returnList, 'maxNewCases': maxNewCases, 'maxNewDeaths': maxNewDeaths};
+  return {
+    'data': returnList,
+    'maxNewCases': maxNewCases,
+    'maxNewDeaths': maxNewDeaths,
+    'error': null
+  };
 }

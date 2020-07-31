@@ -31,8 +31,9 @@ class CountrySearch extends SearchDelegate<Country> {
             itemBuilder: (BuildContext context, int i) {
               return ListTile(
                 title: Text(selectCountries[i].name),
-                subtitle:
-                    (selectCountries[i].hasRecovered) ? Text('with recovery data') : Container(),
+                subtitle: (selectCountries[i].hasRecovered)
+                    ? Text('From ${selectCountries[i].source} with recovery data')
+                    : Text('From ${selectCountries[i].source}'),
                 onTap: () => close(context, selectCountries[i]),
               );
             });

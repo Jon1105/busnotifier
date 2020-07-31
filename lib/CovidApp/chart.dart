@@ -19,7 +19,6 @@ class CovidChart extends StatefulWidget {
 class _CovidChartState extends State<CovidChart> {
   bool showingNew = false;
   bool deathScale = false;
-  double _angle = pi / 8;
   List<LineChartBarData> lineBarsData = [];
 
   LineChartBarData barData(String type, Color color) {
@@ -134,6 +133,11 @@ class _CovidChartState extends State<CovidChart> {
 
   @override
   Widget build(BuildContext context) {
+    String title1 = (showingNew) ? 'New' : 'Total';
+    String title2 = (deathScale)
+        ? 'Deaths'
+        : 'Cases'; //(widget.country.hasRecovered) ? 'Cases & Recovered' : 'Cases';
+
     return Container(
         margin: EdgeInsets.all(10),
         padding: EdgeInsets.all(15),
@@ -144,6 +148,8 @@ class _CovidChartState extends State<CovidChart> {
                 end: Alignment.topCenter)),
         child: Column(children: <Widget>[
           Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               IconButton(
                   icon: Icon(Icons.loop, color: Colors.white),
@@ -151,21 +157,21 @@ class _CovidChartState extends State<CovidChart> {
                         showingNew = !showingNew;
                         lineBarsData = getBarData();
                       })),
-              Text('${(showingNew) ? 'New' : 'Total'} Cases & Deaths',
+              Text(title1 + ' ' + title2,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white)),
-              Transform.rotate(
-                angle: _angle,
-                child: IconButton(
-                    color: Colors.white,
-                    icon: Icon(Icons.airline_seat_flat),
-                    onPressed: () {
-                      setState(() {
-                        deathScale = !deathScale;
-                        _angle = (deathScale) ? 0 : pi / 8;
-                        lineBarsData = getBarData();
-                      });
-                    }),
-              )
+              IconButton(
+                  color: Colors.white,
+                  icon: (deathScale)
+                      ? Icon(Icons.airline_seat_flat)
+                      : Icon(Icons.airline_seat_flat_angled),
+                  onPressed: null
+                  // () {
+                  //   setState(() {
+                  //     deathScale = !deathScale;
+                  //     lineBarsData = getBarData();
+                  //   });
+                  // }
+                  ),
             ],
           ),
           AspectRatio(

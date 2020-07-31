@@ -10,3 +10,10 @@ String numParse(int number) {
     return number.toString();
   }
 }
+
+String stringParse(String string, [bool lowerCase = false]) {
+  if (lowerCase) {
+    string = string.toLowerCase();
+  }
+  return string.replaceAll(' ', '_');
+}
