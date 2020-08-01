@@ -4,6 +4,7 @@ import 'package:hkinfo/CovidApp/country.dart';
 import 'package:hkinfo/CovidApp/parser.dart';
 import 'package:hkinfo/CovidApp/countries.dart';
 import 'package:hkinfo/CovidApp/countrySearch.dart';
+import 'package:hkinfo/CovidHKApp/hkCases.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CovidTracker extends StatefulWidget {
@@ -15,10 +16,10 @@ class _CovidTrackerState extends State<CovidTracker> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   Country country = countries[0]; // HK by default
   bool loading = true;
-  Map<String, dynamic> data;
+  Map<String, dynamic> data = {};
   BoxDecoration boxDeco = BoxDecoration(borderRadius: BorderRadius.circular(30));
   static const EdgeInsets padding = EdgeInsets.all(15);
-  static const EdgeInsets margin = EdgeInsets.all(10);
+  static const EdgeInsets margin = EdgeInsets.symmetric(vertical: 5, horizontal: 10);
 
   String checkDate(DateTime date) {
     var now = DateTime.now();
@@ -78,8 +79,19 @@ class _CovidTrackerState extends State<CovidTracker> {
               icon: Icon(Icons.directions_bus, color: Colors.deepOrange),
               onPressed: Navigator.of(context).pop),
           // elevation: 0,
-          title: Text('${country.name} Covid'),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text('${country.name} Covid'),
+              (!loading)
+                  ? Text('Last updated : ${checkDate(data['data'].last.day)}',
+                      style: TextStyle(
+                          fontSize: 12, fontStyle: FontStyle.italic, fontWeight: FontWeight.w400))
+                  : SizedBox(height: 12)
+            ],
+          ),
           actions: <Widget>[
+            IconButton(icon: Icon(Icons.refresh), onPressed: updateData),
             IconButton(
                 icon: Icon(Icons.search),
                 onPressed: () async {
@@ -92,7 +104,7 @@ class _CovidTrackerState extends State<CovidTracker> {
                         .removeCurrentSnackBar(reason: SnackBarClosedReason.dismiss);
                     showBar();
                   }
-                })
+                }),
           ],
         ),
         body: (loading)
@@ -210,24 +222,39 @@ class _CovidTrackerState extends State<CovidTracker> {
                             ],
                           )),
                       // Spacer(),
-                      Container(
-                        width: double.infinity,
-                        margin: margin,
-                        padding: EdgeInsets.all(3),
-                        decoration: boxDeco.copyWith(
-                          // boxShadow: [BoxShadow(offset: Offset(0, 3), color: Colors.grey[300])],
-                          color: Colors.blueGrey[200].withOpacity(0.5),
-                        ),
-                        child: Center(
-                            child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            SizedBox(width: Theme.of(context).iconTheme.size),
-                            Text('Last updated : ${checkDate(data['data'].last.day)}'),
-                            GestureDetector(child: Icon(Icons.refresh), onTap: updateData)
-                          ],
-                        )),
-                      ),
+                      (country.moreInfoDataGetter != null)
+                          ? GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(PageRouteBuilder(
+                                    pageBuilder: (_, __, ___) => CasesInfo(country),
+                                    transitionDuration: Duration(milliseconds: 200),
+                                    transitionsBuilder: (context, animation, secondaryAnimation,
+                                            child) =>
+                                        Align(
+                                            child: SizeTransition(
+                                          sizeFactor: animation,
+                                          child: FadeTransition(opacity: animation, child: child),
+                                        ))));
+                              },
+                              child: Container(
+                                width: double.infinity,
+                                margin: margin,
+                                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                                decoration: boxDeco.copyWith(
+                                  color: Colors.blueGrey[200].withOpacity(0.5),
+                                ),
+                                child: Center(
+                                    child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text('More info available'),
+                                    Icon(Icons.more_horiz)
+                                  ],
+                                )),
+                              ),
+                            )
+                          : Container(),
                     ],
                   ));
   }

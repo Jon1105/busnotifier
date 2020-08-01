@@ -1,9 +1,11 @@
 import 'package:hkinfo/CovidApp/country.dart';
 import 'package:hkinfo/CovidApp/owid.dart';
 import 'package:hkinfo/CovidApp/hk.dart';
+import 'package:hkinfo/CovidHKApp/dataGetter.dart';
 
 List<Country> countries = [
-  Country('Hong Kong', hkDataGetter, DateTime(2020, 1, 8), source: 'hk.data.gov'),
+  Country('Hong Kong', hkDataGetter, DateTime(2020, 1, 8),
+      source: 'hk.data.gov', moreInfoDataGetter: hkMoreData),
   Country('France', () async => await owidDataGetter('France'), DateTime(2019, 12, 31)),
   Country('Madagascar', () async => await owidDataGetter('Madagascar'), DateTime(2020, 3, 21)),
   Country(

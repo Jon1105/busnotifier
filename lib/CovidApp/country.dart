@@ -6,7 +6,8 @@ class Country {
   Function dataGetter;
   DateTime startDate;
   String source;
-  Country(this.name, this.dataGetter, this.startDate, {this.source}) {
+  Function moreInfoDataGetter;
+  Country(this.name, this.dataGetter, this.startDate, {this.source, this.moreInfoDataGetter}) {
     this.source = (this.source == null) ? 'OurWorldInData.org' : this.source;
   }
 

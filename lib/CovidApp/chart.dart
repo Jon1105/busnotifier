@@ -4,12 +4,11 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import 'package:hkinfo/CovidApp/country.dart';
 import 'package:hkinfo/CovidApp/day.dart';
-import 'dart:math';
 
 class CovidChart extends StatefulWidget {
   final Map<String, dynamic> data;
   final Country country;
-  BoxDecoration boxDeco;
+  final BoxDecoration boxDeco;
   CovidChart(this.data, this.country, this.boxDeco);
 
   @override
@@ -139,7 +138,7 @@ class _CovidChartState extends State<CovidChart> {
         : 'Cases'; //(widget.country.hasRecovered) ? 'Cases & Recovered' : 'Cases';
 
     return Container(
-        margin: EdgeInsets.all(10),
+        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
         padding: EdgeInsets.all(15),
         decoration: widget.boxDeco.copyWith(
             gradient: LinearGradient(

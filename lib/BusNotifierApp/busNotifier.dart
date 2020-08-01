@@ -78,6 +78,7 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
       } else if (reminder1.time.isBefore(reminder2.time)) {
         return -1;
       }
+      return null;
     });
     List<Map> mapReminders = remindersToMaps(reminders);
     final file = await _remindersFile;
@@ -304,8 +305,6 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
         payload: json.encode(mapFromReminder(reminder)));
   }
 
-  
-
   Future<List<TimeOfDay>> getTimes(Stop stop) async {
     String url =
         'https://rt.data.gov.hk/v1/transport/citybus-nwfb/eta/CTB/${stop.id}/${stop.route}';
@@ -358,6 +357,7 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
         });
     return null;
   }
+
   @override
   void initState() {
     super.initState();
@@ -382,14 +382,13 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
         leading: IconButton(
             icon: Icon(Icons.person),
             onPressed: () => Navigator.of(context).push(PageRouteBuilder(
-                pageBuilder: (context, animation, secondaryAnimation) => CovidTracker(),
-                transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                  var tween = Tween(begin: Offset(1, 0), end: Offset.zero);
-                  return SlideTransition(
-                    position: animation.drive(tween),
-                    child: child,
-                  );
-                }))),
+                pageBuilder: (_, __, ___) => CovidTracker(),
+                transitionDuration: Duration(milliseconds: 250),
+                transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+                    SlideTransition(
+                      position: animation.drive(Tween(begin: Offset(1, 0), end: Offset.zero)),
+                      child: child,
+                    )))),
         title: Text(
           'Bus Notifier',
           style: TextStyle(fontFamily: 'Rubik'),

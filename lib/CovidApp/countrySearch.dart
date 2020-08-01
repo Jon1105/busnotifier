@@ -6,7 +6,16 @@ class CountrySearch extends SearchDelegate<Country> {
   CountrySearch(this.allCountries);
   @override
   List<Widget> buildActions(BuildContext context) {
-    return [IconButton(icon: Icon(Icons.clear), onPressed: () => query = '')];
+    return [
+      IconButton(
+          icon: Icon(Icons.clear),
+          onPressed: () {
+            if (query != '') {
+              query = '';
+            } else
+              close(context, null);
+          })
+    ];
   }
 
   @override
@@ -31,8 +40,8 @@ class CountrySearch extends SearchDelegate<Country> {
             itemBuilder: (BuildContext context, int i) {
               return ListTile(
                 title: Text(selectCountries[i].name),
-                subtitle: (selectCountries[i].hasRecovered)
-                    ? Text('From ${selectCountries[i].source} with recovery data')
+                subtitle: (selectCountries[i].moreInfoDataGetter != null)
+                    ? Text('From ${selectCountries[i].source} with extra data')
                     : Text('From ${selectCountries[i].source}'),
                 onTap: () => close(context, selectCountries[i]),
               );
