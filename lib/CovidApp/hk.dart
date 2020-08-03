@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'dart:io';
 
-Future<Map<String, dynamic>> hkDataGetter() async {
+Future<Map<String, dynamic>> hkDataGetter({bool override = false}) async {
   const String url =
       'https://api.data.gov.hk/v2/filter?q=%7B%22resource%22%3A%22http%3A%2F%2Fwww.chp.gov.hk%2Ffiles%2Fmisc%2Flatest_situation_of_reported_cases_covid_19_eng.csv%22%2C%22section%22%3A1%2C%22format%22%3A%22json%22%7D';
 
@@ -12,7 +12,11 @@ Future<Map<String, dynamic>> hkDataGetter() async {
   try {
     response = await http.get(url);
     if (response.statusCode != 200) {
-      return {'errorMsg': 'Something went wrong.', 'error': 0, 'statusCode': response.statusCode};
+      return {
+        'errorMsg': 'Something went wrong.',
+        'error': 0,
+        'statusCode': response.statusCode
+      };
     }
   } on SocketException catch (error) {
     return {'errorMsg': 'No internet Connection', 'error': error};
@@ -27,13 +31,16 @@ Future<Map<String, dynamic>> hkDataGetter() async {
   for (int i = 0; i < mapDays.length; i++) {
     int newCases = (i == 0)
         ? mapDays[i]['Number of confirmed cases']
-        : mapDays[i]['Number of confirmed cases'] - mapDays[i - 1]['Number of confirmed cases'];
+        : mapDays[i]['Number of confirmed cases'] -
+            mapDays[i - 1]['Number of confirmed cases'];
     int newDeaths = (i == 0)
         ? mapDays[i]['Number of death cases']
-        : mapDays[i]['Number of death cases'] - mapDays[i - 1]['Number of death cases'];
+        : mapDays[i]['Number of death cases'] -
+            mapDays[i - 1]['Number of death cases'];
     int newRecovered = (i == 0)
         ? mapDays[i]['Number of discharge cases']
-        : mapDays[i]['Number of discharge cases'] - mapDays[i - 1]['Number of discharge cases'];
+        : mapDays[i]['Number of discharge cases'] -
+            mapDays[i - 1]['Number of discharge cases'];
     returnList.add(Day(
       DateFormat('d/M/yyyy').parse(mapDays[i]['As of date']),
       index: i,

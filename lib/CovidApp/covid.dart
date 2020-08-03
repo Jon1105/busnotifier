@@ -6,6 +6,7 @@ import 'package:hkinfo/CovidApp/countries.dart';
 import 'package:hkinfo/CovidApp/countrySearch.dart';
 import 'package:hkinfo/CovidHKApp/hkCases.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:hkinfo/main.dart';
 
 class CovidTracker extends StatefulWidget {
   @override
@@ -17,9 +18,11 @@ class _CovidTrackerState extends State<CovidTracker> {
   Country country = countries[0]; // HK by default
   bool loading = true;
   Map<String, dynamic> data = {};
-  BoxDecoration boxDeco = BoxDecoration(borderRadius: BorderRadius.circular(30));
+  BoxDecoration boxDeco =
+      BoxDecoration(borderRadius: BorderRadius.circular(30));
   static const EdgeInsets padding = EdgeInsets.all(15);
-  static const EdgeInsets margin = EdgeInsets.symmetric(vertical: 5, horizontal: 10);
+  static const EdgeInsets margin =
+      EdgeInsets.symmetric(vertical: 5, horizontal: 10);
 
   String checkDate(DateTime date) {
     var now = DateTime.now();
@@ -45,8 +48,10 @@ class _CovidTrackerState extends State<CovidTracker> {
       action: SnackBarAction(
           label: 'Find out',
           onPressed: () {
-            launch('https://en.wikipedia.org/wiki/' + stringParse(country.name));
-            _scaffoldKey.currentState.removeCurrentSnackBar(reason: SnackBarClosedReason.dismiss);
+            launch(
+                'https://en.wikipedia.org/wiki/' + stringParse(country.name));
+            _scaffoldKey.currentState
+                .removeCurrentSnackBar(reason: SnackBarClosedReason.dismiss);
           }),
     ));
   }
@@ -60,14 +65,16 @@ class _CovidTrackerState extends State<CovidTracker> {
     });
   }
 
-  void updateData() {
+  void updateData([override = false]) {
     setState(() {
       loading = true;
     });
-    country.dataGetter().then((Map<String, dynamic> rdata) => setState(() {
-          data = rdata;
-          loading = false;
-        }));
+    country
+        .dataGetter(override: override)
+        .then((Map<String, dynamic> rdata) => setState(() {
+              data = rdata;
+              loading = false;
+            }));
   }
 
   @override
@@ -76,8 +83,12 @@ class _CovidTrackerState extends State<CovidTracker> {
         key: _scaffoldKey,
         appBar: AppBar(
           leading: IconButton(
-              icon: Icon(Icons.directions_bus, color: Colors.deepOrange),
-              onPressed: Navigator.of(context).pop),
+              icon: Icon(Icons.directions_bus),
+              onPressed: true
+                  ? null
+                  : () => globalPageController.animateToPage(0,
+                      duration: Duration(milliseconds: 500),
+                      curve: Curves.elasticInOut)),
           // elevation: 0,
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,22 +97,28 @@ class _CovidTrackerState extends State<CovidTracker> {
               (!loading)
                   ? Text('Last updated : ${checkDate(data['data'].last.day)}',
                       style: TextStyle(
-                          fontSize: 12, fontStyle: FontStyle.italic, fontWeight: FontWeight.w400))
+                          fontSize: 12,
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.w400))
                   : SizedBox(height: 12)
             ],
           ),
           actions: <Widget>[
-            IconButton(icon: Icon(Icons.refresh), onPressed: updateData),
+            IconButton(
+                icon: Icon(Icons.refresh),
+                onPressed: () {
+                  updateData(true);
+                }),
             IconButton(
                 icon: Icon(Icons.search),
                 onPressed: () async {
-                  var cntry =
-                      await showSearch(context: context, delegate: CountrySearch(countries));
+                  var cntry = await showSearch(
+                      context: context, delegate: CountrySearch(countries));
                   if (cntry != null) {
                     setState(() => country = cntry);
                     updateData();
-                    _scaffoldKey.currentState
-                        .removeCurrentSnackBar(reason: SnackBarClosedReason.dismiss);
+                    _scaffoldKey.currentState.removeCurrentSnackBar(
+                        reason: SnackBarClosedReason.dismiss);
                     showBar();
                   }
                 }),
@@ -115,7 +132,10 @@ class _CovidTrackerState extends State<CovidTracker> {
                       mainAxisSize: MainAxisSize.max,
                       children: <Widget>[
                         Text(data['errorMsg']),
-                        RaisedButton(onPressed: updateData, child: Text('Try again'), elevation: 0)
+                        RaisedButton(
+                            onPressed: updateData,
+                            child: Text('Try again'),
+                            elevation: 0)
                       ],
                     ),
                   )
@@ -127,7 +147,10 @@ class _CovidTrackerState extends State<CovidTracker> {
                           padding: padding,
                           decoration: boxDeco.copyWith(
                               gradient: LinearGradient(
-                                  colors: [Colors.orange[300], Theme.of(context).accentColor],
+                                  colors: [
+                                Colors.orange[300],
+                                Theme.of(context).accentColor
+                              ],
                                   begin: Alignment.topCenter,
                                   end: Alignment.bottomCenter)),
                           child: Column(
@@ -138,7 +161,8 @@ class _CovidTrackerState extends State<CovidTracker> {
                                     child: Center(
                                       child: Text('Confirmed',
                                           style: TextStyle(
-                                              color: Colors.blue, fontWeight: FontWeight.bold)),
+                                              color: Colors.blue,
+                                              fontWeight: FontWeight.bold)),
                                     )),
                                 (country.hasRecovered)
                                     ? Flexible(
@@ -163,27 +187,54 @@ class _CovidTrackerState extends State<CovidTracker> {
                               Row(children: <Widget>[
                                 Flexible(
                                     child: Center(
-                                      child: Text(numParse(data['data'].last.totalCases),
-                                          style:
-                                              TextStyle(fontWeight: FontWeight.w500, fontSize: 25)),
+                                      child: Tooltip(
+                                        message: data['data']
+                                            .last
+                                            .totalCases
+                                            .toString(),
+                                        child: Text(
+                                            numParse(
+                                                data['data'].last.totalCases),
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 25)),
+                                      ),
                                     ),
                                     fit: FlexFit.tight),
                                 (country.hasRecovered)
                                     ? Flexible(
                                         child: Center(
-                                          child: Text(
-                                            numParse(data['data'].last.totalRecovered),
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w500, fontSize: 25),
+                                          child: Tooltip(
+                                            message: data['data']
+                                                .last
+                                                .totalRecovered
+                                                .toString(),
+                                            child: Text(
+                                              numParse(data['data']
+                                                  .last
+                                                  .totalRecovered),
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 25),
+                                            ),
                                           ),
                                         ),
                                         fit: FlexFit.tight)
                                     : Container(),
                                 Flexible(
                                     child: Center(
-                                      child: Text(
-                                        numParse(data['data'].last.totalDeaths),
-                                        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 25),
+                                      child: Tooltip(
+                                        message: data['data']
+                                            .last
+                                            .totalDeaths
+                                            .toString(),
+                                        child: Text(
+                                          numParse(
+                                              data['data'].last.totalDeaths),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 25),
+                                        ),
                                       ),
                                     ),
                                     fit: FlexFit.tight),
@@ -194,27 +245,52 @@ class _CovidTrackerState extends State<CovidTracker> {
                               Row(children: <Widget>[
                                 Flexible(
                                     child: Center(
-                                      child: Text(numParse(data['data'].last.newCases),
-                                          style:
-                                              TextStyle(fontWeight: FontWeight.w500, fontSize: 25)),
+                                      child: Tooltip(
+                                        message: data['data']
+                                            .last
+                                            .newCases
+                                            .toString(),
+                                        child: Text(
+                                            numParse(
+                                                data['data'].last.newCases),
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 25)),
+                                      ),
                                     ),
                                     fit: FlexFit.tight),
                                 (country.hasRecovered)
                                     ? Flexible(
                                         child: Center(
-                                          child: Text(
-                                            numParse(data['data'].last.newRecovered),
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w500, fontSize: 25),
-                                          ),
+                                          child: Tooltip(
+                                              message: data['data']
+                                                  .last
+                                                  .newRecovered
+                                                  .toString(),
+                                              child: Text(
+                                                numParse(data['data']
+                                                    .last
+                                                    .newRecovered),
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 25),
+                                              )),
                                         ),
                                         fit: FlexFit.tight)
                                     : Container(),
                                 Flexible(
                                     child: Center(
-                                      child: Text(
-                                        numParse(data['data'].last.newDeaths),
-                                        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 25),
+                                      child: Tooltip(
+                                        message: data['data']
+                                            .last
+                                            .newDeaths
+                                            .toString(),
+                                        child: Text(
+                                          numParse(data['data'].last.newDeaths),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 25),
+                                        ),
                                       ),
                                     ),
                                     fit: FlexFit.tight),
@@ -226,20 +302,24 @@ class _CovidTrackerState extends State<CovidTracker> {
                           ? GestureDetector(
                               onTap: () {
                                 Navigator.of(context).push(PageRouteBuilder(
-                                    pageBuilder: (_, __, ___) => CasesInfo(country),
-                                    transitionDuration: Duration(milliseconds: 200),
-                                    transitionsBuilder: (context, animation, secondaryAnimation,
-                                            child) =>
+                                    pageBuilder: (_, __, ___) =>
+                                        CasesInfo(country),
+                                    transitionDuration:
+                                        Duration(milliseconds: 200),
+                                    transitionsBuilder: (context, animation,
+                                            secondaryAnimation, child) =>
                                         Align(
-                                            child: SizeTransition(
-                                          sizeFactor: animation,
-                                          child: FadeTransition(opacity: animation, child: child),
+                                            child: ScaleTransition(
+                                          scale: animation,
+                                          child: FadeTransition(
+                                              opacity: animation, child: child),
                                         ))));
                               },
                               child: Container(
                                 width: double.infinity,
                                 margin: margin,
-                                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 15),
                                 decoration: boxDeco.copyWith(
                                   color: Colors.blueGrey[200].withOpacity(0.5),
                                 ),

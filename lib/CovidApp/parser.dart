@@ -17,3 +17,24 @@ String stringParse(String string, [bool lowerCase = false]) {
   }
   return string.replaceAll(' ', '_');
 }
+
+String beautify(String string) {
+  // ----- ----- ----- ----- ----- -----
+  if (string == 'title') return 'District';
+  // ----- ----- ----- ----- ----- -----
+  List<String> word = List();
+  for (int i = 0; i < string.length; i++) {
+    word.add(isUpper(string[i]) ? ' ' + string[i] : string[i]);
+  }
+
+  return firstUpper(word.join('').trim());
+}
+
+bool isUpper(String char) {
+  assert(char.length == 1);
+  return char.toUpperCase() == char;
+}
+
+String firstUpper(String string) {
+  return string[0].toUpperCase() + string.substring(1);
+}

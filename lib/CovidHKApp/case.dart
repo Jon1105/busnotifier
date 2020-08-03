@@ -21,8 +21,41 @@ class Case {
       @required this.age,
       @required this.male,
       @required this.onsetStatus,
-      this.lastDateofResidence,
       this.onsetDate,
       @required this.classification,
-      @required this.hkResident});
+      @required this.hkResident,
+      this.lastDateofResidence});
+
+  // For reading to and from cache
+
+  static Case fromMap(Map<String, dynamic> map) {
+    return Case(
+        caseNum: map['caseNum'],
+        reportDate: DateTime.parse(map['reportDate']),
+        district: map['district'],
+        building: map['building'],
+        age: map['age'],
+        male: map['male'],
+        onsetStatus: map['onsetStatus'],
+        onsetDate: map['onsetDate'],
+        classification: map['classification'],
+        hkResident: map['hkResident'],
+        lastDateofResidence: DateTime.parse(map['lastDateofResidence']));
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'caseNum': this.caseNum,
+      'reportDate': this.reportDate.toIso8601String(),
+      'district': this.district,
+      'building': this.building,
+      'age': this.age,
+      'male': this.male,
+      'onsetStatus': this.onsetStatus,
+      'onsetDate': this.onsetDate.toIso8601String(),
+      'classification': this.classification,
+      'hkResident': this.hkResident,
+      'lastDateofResidence': this.lastDateofResidence.toIso8601String()
+    };
+  }
 }

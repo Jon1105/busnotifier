@@ -381,14 +381,16 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
       appBar: AppBar(
         leading: IconButton(
             icon: Icon(Icons.person),
-            onPressed: () => Navigator.of(context).push(PageRouteBuilder(
-                pageBuilder: (_, __, ___) => CovidTracker(),
-                transitionDuration: Duration(milliseconds: 250),
-                transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-                    SlideTransition(
-                      position: animation.drive(Tween(begin: Offset(1, 0), end: Offset.zero)),
-                      child: child,
-                    )))),
+            onPressed: true
+                ? null
+                : () => Navigator.of(context).push(PageRouteBuilder(
+                    pageBuilder: (_, __, ___) => CovidTracker(),
+                    transitionDuration: Duration(milliseconds: 250),
+                    transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+                        SlideTransition(
+                          position: animation.drive(Tween(begin: Offset(1, 0), end: Offset.zero)),
+                          child: child,
+                        )))),
         title: Text(
           'Bus Notifier',
           style: TextStyle(fontFamily: 'Rubik'),

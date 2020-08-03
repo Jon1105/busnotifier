@@ -30,14 +30,6 @@ class _CovidChartState extends State<CovidChart> {
         isStrokeCapRound: true,
         dotData: FlDotData(show: false),
         spots: widget.data['data'].map<FlSpot>((Day day) {
-          // print('Day');
-          // print('idx ${day.index}');
-          // print('tcases ${day.totalCases}');
-          // print('tdeath ${day.totalDeaths}');
-          // print('ncases ${day.newCases}');
-          // print('ndeath ${day.newDeaths}');
-          // print('day ${day.day}');
-
           if (type == 'c') {
             newValue = day.newCases;
             totalValue = day.totalCases;
@@ -58,7 +50,8 @@ class _CovidChartState extends State<CovidChart> {
               } else
                 return FlSpot.nullSpot;
             } else {
-              if (totalValue <= widget.data['data'].last.totalDeaths && totalValue >= 0) {
+              if (totalValue <= widget.data['data'].last.totalDeaths &&
+                  totalValue >= 0) {
                 return FlSpot(day.index.toDouble(), totalValue.toDouble());
               } else
                 return FlSpot.nullSpot;
@@ -70,7 +63,8 @@ class _CovidChartState extends State<CovidChart> {
               } else
                 return FlSpot.nullSpot;
             } else {
-              if (totalValue <= widget.data['data'].last.totalCases && totalValue >= 0) {
+              if (totalValue <= widget.data['data'].last.totalCases &&
+                  totalValue >= 0) {
                 return FlSpot(day.index.toDouble(), totalValue.toDouble());
               } else
                 return FlSpot.nullSpot;
@@ -87,25 +81,17 @@ class _CovidChartState extends State<CovidChart> {
     list.addAll([
       barData('d', Colors.redAccent[700]),
       barData('c', Colors.blue),
-      //
-      // LineChartBarData(colors: [Colors.transparent], spots: [FlSpot(0, 0)])
-      //
     ]);
     return list;
   }
 
   List<LineTooltipItem> getToolTipItems(List<LineBarSpot> spots) {
-    // double idx = spots[0].x;
-
-    var list = [
-      // LineTooltipItem(
-      //     DateFormat('MMMd').format(DateTime.now().add(Duration(days: idx.toInt()))), TextStyle()),
-      LineTooltipItem('C: ${spots[0].y.toInt()}', TextStyle())
-    ];
+    var list = [LineTooltipItem('C: ${spots[0].y.toInt()}', TextStyle())];
     if (widget.country.hasRecovered) {
       list.add(LineTooltipItem('R: ${spots[1].y.toInt()}', TextStyle()));
     }
-    list.add(LineTooltipItem('D: ${spots[spots.length - 1].y.toInt()}', TextStyle()));
+    list.add(LineTooltipItem(
+        'D: ${spots[spots.length - 1].y.toInt()}', TextStyle()));
     return list;
   }
 
@@ -157,7 +143,10 @@ class _CovidChartState extends State<CovidChart> {
                         lineBarsData = getBarData();
                       })),
               Text(title1 + ' ' + title2,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white)),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.white)),
               IconButton(
                   color: Colors.white,
                   icon: (deathScale)
@@ -178,11 +167,16 @@ class _CovidChartState extends State<CovidChart> {
               child: LineChart(LineChartData(
                   minY: 0,
                   maxY: (showingNew)
-                      ? (deathScale) ? widget.data['maxNewDeaths'].toDouble() : null
+                      ? (deathScale)
+                          ? widget.data['maxNewDeaths'].toDouble()
+                          : null
                       // : widget.data['maxNewCases'].toDouble()
-                      : (deathScale) ? widget.data['data'].last.totalDeaths.toDouble() : null,
+                      : (deathScale)
+                          ? widget.data['data'].last.totalDeaths.toDouble()
+                          : null,
                   // : widget.data['data'].last.totalCases.toDouble(),
                   lineTouchData: LineTouchData(
+                    enabled: true,
                     touchTooltipData: LineTouchTooltipData(
                         tooltipBgColor: Colors.blueGrey.withOpacity(0.5),
                         tooltipPadding: EdgeInsets.all(7),
@@ -191,7 +185,8 @@ class _CovidChartState extends State<CovidChart> {
                   lineBarsData: lineBarsData,
                   titlesData: FlTitlesData(
                       leftTitles: SideTitles(
-                          textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                          textStyle: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 12),
                           getTitles: (double cases) {
                             int max;
                             if (deathScale) {
@@ -220,11 +215,13 @@ class _CovidChartState extends State<CovidChart> {
                           },
                           showTitles: true),
                       bottomTitles: SideTitles(
-                          textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 11),
+                          textStyle: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 11),
                           getTitles: (double index) {
                             if ((index % 60) == 0) {
-                              return DateFormat('MMMd').format(
-                                  widget.country.startDate.add(Duration(days: index.toInt())));
+                              return DateFormat('MMMd').format(widget
+                                  .country.startDate
+                                  .add(Duration(days: index.toInt())));
                             } else {
                               return '';
                             }

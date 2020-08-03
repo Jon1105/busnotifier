@@ -58,7 +58,7 @@ class CaseParse {
   }
 
   static String reportDate(Case cAse) {
-    return DateFormat('MMMd').format(cAse.reportDate);
+    return DateFormat('MMM d yyyy').format(cAse.reportDate);
   }
 
   static String district(Case cAse) {

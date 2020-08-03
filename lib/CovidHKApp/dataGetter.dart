@@ -6,7 +6,6 @@ import 'package:hkinfo/CovidHKApp/case.dart';
 import 'package:intl/intl.dart';
 
 Future<Map<String, dynamic>> hkMoreData() async {
-  print('calling');
   const String detailsUrl =
       'https://api.data.gov.hk/v2/filter?q=%7B%22resource%22%3A%22http%3A%2F%2Fwww.chp.gov.hk%2Ffiles%2Fmisc%2Fenhanced_sur_covid_19_eng.csv%22%2C%22section%22%3A1%2C%22format%22%3A%22json%22%7D';
 
@@ -34,31 +33,41 @@ Future<Map<String, dynamic>> hkMoreData() async {
   List details = json.decode(detailsResponse.body);
   List buildings = json.decode(buildingsResponse.body);
 
-  // for each case registered in the buildings data
-  List<Map<String, int>> caseNums = [];
-  // for (Map<String, dynamic> building in buildings) {
-  for (int i = 0; i < buildings.length; i++) {
-    try {
-      for (int cAse
-          in buildings[i]['Related probable/confirmed cases'].split(',').map(int.parse).toList()) {
-        caseNums.add({'num': cAse, 'idx': i});
-      }
-    } on FormatException catch (e) {}
-  }
-  caseNums.sort((a, b) => a['num'].compareTo(b['num']));
+  // Because details[3272]['Case no.'] == '2978'
+  details.sort(
+      (a, b) => int.parse(a['Case no.']).compareTo(int.parse(b['Case no.'])));
 
+  // for each case registered in the buildings data
+  List<Map<String, dynamic>> caseNums = [];
+  for (Map<String, dynamic> building in buildings) {
+    try {
+      for (int cAse in building['Related probable/confirmed cases']
+          .split(',')
+          .map(int.parse)
+          .toList()) {
+        caseNums.add({'num': cAse, 'buildingDetail': building});
+      }
+    } on FormatException catch (e) {
+      continue;
+    }
+  }
+
+  // List<Case> cases = List.generate(caseNums.length, (index) => null);
   List<Case> cases = [];
-  // for (Map<String, int> caseMap in caseNums) {
-  for (int i = 0; i < caseNums.length; i++) {
-    Map<String, dynamic> caseDetail = details[caseNums[i]['num'] - 1];
-    Map<String, dynamic> buildingDetail = buildings[caseNums[i]['idx']];
-    assert(int.parse(caseDetail['Case no.']) == caseNums[i]['num']);
+  for (Map<String, dynamic> caseMap in caseNums) {
+    // for (int i = 0; i < caseNums.length; i++) {
+    //   if (caseNums[i]['num'] == null) {
+    //     continue;
+    //   }
+    Map<String, dynamic> caseDetail = details[caseMap['num'] - 1];
+    Map<String, dynamic> buildingDetail = caseMap['buildingDetail'];
+    assert(int.parse(caseDetail['Case no.']) == caseMap['num']);
     int caseNum = int.parse(caseDetail['Case no.']);
     String district = buildingDetail['District'];
     DateTime lastDateOfResidence;
     if (buildingDetail['Last date of residence of the case(s)'] != '') {
-      lastDateOfResidence =
-          DateFormat('M/d/yy').parse(buildingDetail['Last date of residence of the case(s)']);
+      lastDateOfResidence = DateFormat('d/M/yy')
+          .parse(buildingDetail['Last date of residence of the case(s)']);
     }
 
     // if (i != 0) {
@@ -73,7 +82,7 @@ Future<Map<String, dynamic>> hkMoreData() async {
     cases.add(
       Case(
           caseNum: caseNum,
-          reportDate: DateFormat('M/d/yy').parse(caseDetail['Report date']),
+          reportDate: DateFormat('d/M/yy').parse(caseDetail['Report date']),
           district: district,
           building: buildingDetail['Building name'],
           age: caseDetail['Age'],
@@ -86,11 +95,11 @@ Future<Map<String, dynamic>> hkMoreData() async {
     );
     if (status == 'Known') {
       print(date);
-      }
+    }
   }
 
   // bruteForce
-
+  cases.sort((Case a, Case b) => a.caseNum.compareTo(b.caseNum));
   return {'cases': cases, 'error': null};
 }
 
@@ -106,8 +115,7 @@ String getStatus(dynamic value) {
 dynamic getDate(String value) {
   try {
     return DateFormat('M/d/yy').parse(value);
-  } on FormatException catch (e) {
-  }
+  } on FormatException catch (e) {}
   switch (value) {
     case 'Asymptomatic':
     case 'Pending':

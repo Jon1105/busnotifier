@@ -1,18 +1,26 @@
-### Todo
-## Hong Kong Specific
+# Todo
 - [ ] Add daily notification for hk cases
-- [ ] Use google maps Api & 
+- [ ] Use google maps api
 - [ ] [gov](https://data.gov.hk/en-data/dataset/hk-dh-chpsebcddr-novel-infectious-agent) api to show location of cases
-
-## Other
-- [ ] Wrap Reminders and Covid Apps in PageView
-- [ ] Bug: Fix changing to deaths scale
+- [ ] Bug: Fix deaths scale
 - [ ] Change countries.dart to json file
 - [ ] Create interchangeable themes
 - [ ] Add multiple stop functionality
-- [ ] Styling and HK More Info Page
-- [ ] Optimise Loading of data from owid by saving in memory for 1 day (Time of update ~= 17:15 HK)  
-      Use [smaller data set](https://covid.ourworldindata.org/data/ecdc/full_data.csv)
 - [ ] Use [tootltip](https://www.youtube.com/watch?v=EeEfD5fI-5Q)
-- [ ] Use [table widget](https://www.youtube.com/watch?v=_lbE0wsVZSw)
-- [ ] Show Dropdowns over lists to show valid info
+- [ ] Show Dropdowns over case list to choose which fields to show
+- [ ] Preserve current country when switching between pages in PageView
+- [ ] Check if data is corect in HK cases info
+- [ ] Complete filter functionality for cases info (dates / days ago, ...)
+- [ ] Why some cases have duplicates (e.g. case 3397 - 3368)
+- [ ] show map in district info
+- [ ] add district numbers next to each district
+- [ ] Add an *all countries* dashboard
+
+<br/>
+
+- [x] Optimise Loading of data from owid by saving in memory for 1 day (Time of update ~= 17:15 HK)
+      TimeOfDay.utc()  
+      ~~Use [smaller data set](https://covid.ourworldindata.org/data/ecdc/full_data.csv)~~
+- [x] fix shadow on dropdowns for districts
+- [x] Make filter function for cases info
+- [x] Wrap Reminders and Covid Apps in PageView
