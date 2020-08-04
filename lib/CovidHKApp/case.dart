@@ -3,7 +3,8 @@ import 'package:flutter/foundation.dart';
 class Case {
   //! Subtract 1 from from case number
   int caseNum;
-  DateTime reportDate; // 0 - 3151 inclusive
+  DateTime reportDate;
+  List<String> districts; // 0 - 3151 inclusive
   String district;
   String building;
   int age;
@@ -16,7 +17,7 @@ class Case {
   Case(
       {@required this.caseNum,
       @required this.reportDate,
-      @required this.district,
+      @required this.districts,
       @required this.building,
       @required this.age,
       @required this.male,
@@ -24,7 +25,9 @@ class Case {
       this.onsetDate,
       @required this.classification,
       @required this.hkResident,
-      this.lastDateofResidence});
+      this.lastDateofResidence}) {
+    this.district = this.districts.join(', ');
+  }
 
   // For reading to and from cache
 
@@ -32,7 +35,7 @@ class Case {
     return Case(
         caseNum: map['caseNum'],
         reportDate: DateTime.parse(map['reportDate']),
-        district: map['district'],
+        districts: map['districts'],
         building: map['building'],
         age: map['age'],
         male: map['male'],
@@ -47,7 +50,7 @@ class Case {
     return {
       'caseNum': this.caseNum,
       'reportDate': this.reportDate.toIso8601String(),
-      'district': this.district,
+      'districts': this.districts,
       'building': this.building,
       'age': this.age,
       'male': this.male,

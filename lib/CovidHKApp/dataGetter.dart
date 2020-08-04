@@ -52,18 +52,21 @@ Future<Map<String, dynamic>> hkMoreData() async {
     }
   }
 
+  caseNums.sort((Map case1, Map case2) => case1['num'].compareTo(case2['num']));
+
   // List<Case> cases = List.generate(caseNums.length, (index) => null);
   List<Case> cases = [];
+  int i = 0;
   for (Map<String, dynamic> caseMap in caseNums) {
     // for (int i = 0; i < caseNums.length; i++) {
-    //   if (caseNums[i]['num'] == null) {
-    //     continue;
-    //   }
+    if (caseNums[i]['num'] == null) {
+      continue;
+    }
     Map<String, dynamic> caseDetail = details[caseMap['num'] - 1];
     Map<String, dynamic> buildingDetail = caseMap['buildingDetail'];
     assert(int.parse(caseDetail['Case no.']) == caseMap['num']);
     int caseNum = int.parse(caseDetail['Case no.']);
-    String district = buildingDetail['District'];
+    List<String> districts = [buildingDetail['District']];
     DateTime lastDateOfResidence;
     if (buildingDetail['Last date of residence of the case(s)'] != '') {
       lastDateOfResidence = DateFormat('d/M/yy')
@@ -77,13 +80,13 @@ Future<Map<String, dynamic>> hkMoreData() async {
     //   }
     // }
 
-    var date = getDate(caseDetail['Date of Onset']);
+    var date = getDate(caseDetail['Date of onset']);
     String status = getStatus(date);
     cases.add(
       Case(
           caseNum: caseNum,
           reportDate: DateFormat('d/M/yy').parse(caseDetail['Report date']),
-          district: district,
+          districts: districts,
           building: buildingDetail['Building name'],
           age: caseDetail['Age'],
           male: caseDetail['Gender'] == 'M',
@@ -93,14 +96,14 @@ Future<Map<String, dynamic>> hkMoreData() async {
           hkResident: caseDetail['HK/Non-HK resident'] == 'HK resident',
           lastDateofResidence: lastDateOfResidence),
     );
-    if (status == 'Known') {
-      print(date);
-    }
+    i++;
   }
 
   // bruteForce
   cases.sort((Case a, Case b) => a.caseNum.compareTo(b.caseNum));
   return {'cases': cases, 'error': null};
+
+// return {'error': Error};
 }
 
 //
@@ -113,15 +116,13 @@ String getStatus(dynamic value) {
 }
 
 dynamic getDate(String value) {
+  assert(value != null);
   try {
     return DateFormat('M/d/yy').parse(value);
-  } on FormatException catch (e) {}
-  switch (value) {
-    case 'Asymptomatic':
-    case 'Pending':
-    case 'Unkown':
+  } on FormatException catch (_) {
+    if (value == 'Asymptomatic' || value == 'Pending')
       return value;
-    default:
+    else
       return 'Unknown';
   }
 }

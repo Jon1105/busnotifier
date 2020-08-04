@@ -8,6 +8,7 @@ class CaseFilter {
   RangeValues range;
   RangeValues dateRange;
   String textSearch;
+  bool fourTeenDaysAgo;
   int maxDaysAgo;
   bool ascending = true;
   bool imported;
@@ -22,10 +23,6 @@ class CaseFilter {
     this.max = this.cases.last.caseNum.toDouble();
     this.min = this.cases[0].caseNum.toDouble();
     resetFilter();
-  }
-
-  void caseNumRange(RangeValues range) {
-    this.range = range;
   }
 
   List<Case> getCases() {
@@ -49,22 +46,38 @@ class CaseFilter {
                 .contains(this.textSearch.trim().toLowerCase()) ||
             cAse.caseNum
                 .toString()
-                .contains(this.textSearch.trim().toLowerCase()));
+                .contains(this.textSearch.trim().toLowerCase()) ||
+            this
+                .textSearch
+                .trim()
+                .toLowerCase()
+                .contains(cAse.caseNum.toString()) ||
+            this
+                .textSearch
+                .trim()
+                .toLowerCase()
+                .contains(cAse.building.toLowerCase()) ||
+            this
+                .textSearch
+                .trim()
+                .toLowerCase()
+                .contains(cAse.district.toLowerCase()));
       }).toList();
     }
 
-    //
-    // {
-    //   DateTime now = DateTime.now();
-    //   DateTime twoWeeksAgo = now.subtract(Duration(days: 14));
-    //   nCases = nCases.where((Case cAse) {}).toList();
-    // }
+    if (this.fourTeenDaysAgo) {
+      DateTime now = DateTime.now();
+      nCases = nCases
+          .where((Case cAse) => now.difference(cAse.reportDate).inDays < 15)
+          .toList();
+    }
     return nCases;
   }
 
   void resetFilter() {
     this.range = RangeValues(this.min, this.max);
     this.dateRange;
+    this.fourTeenDaysAgo = false;
     this.textSearch = '';
   }
 }

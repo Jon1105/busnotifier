@@ -38,3 +38,8 @@ bool isUpper(String char) {
 String firstUpper(String string) {
   return string[0].toUpperCase() + string.substring(1);
 }
+
+String numComma(double number) {
+  String s = number.toString();
+  
+}

@@ -89,7 +89,8 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
     final file = await _remindersFile;
     reminders = await readReminders();
     try {
-      await flutterLocalNotificationsPlugin.cancel(reminders.elementAt(index).notificationId);
+      await flutterLocalNotificationsPlugin
+          .cancel(reminders.elementAt(index).notificationId);
     } catch (_) {
       print('No notification scheduled');
     }
@@ -111,7 +112,8 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
         // can tap outside to dismiss
         barrierDismissible: true,
         builder: (BuildContext context) => AlertDialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
               contentPadding: EdgeInsets.fromLTRB(8, 8, 8, 2),
               title: Text('Add a reminder'),
               content: StatefulBuilder(
@@ -132,7 +134,8 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                                       context: context,
                                       initialDate: now,
                                       firstDate: now,
-                                      lastDate: now.add(Duration(days: 30 * 6)));
+                                      lastDate:
+                                          now.add(Duration(days: 30 * 6)));
                                   if (result != null) {
                                     setState(() {
                                       dayPick = result;
@@ -142,7 +145,8 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                               ),
                               Text(
                                 DateFormat('EEEE dd').format(dayPick),
-                                style: TextStyle(fontStyle: FontStyle.italic, fontSize: 14),
+                                style: TextStyle(
+                                    fontStyle: FontStyle.italic, fontSize: 14),
                               ),
                             ],
                           ),
@@ -152,8 +156,8 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                                 elevation: 0,
                                 child: Text('Pick Time'),
                                 onPressed: () async {
-                                  var result =
-                                      await showTimePicker(context: context, initialTime: timePick);
+                                  var result = await showTimePicker(
+                                      context: context, initialTime: timePick);
                                   if (result != null) {
                                     setState(() {
                                       timePick = result;
@@ -162,7 +166,9 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                                 },
                               ),
                               Text('${timePick.hour}:${timePick.minute}',
-                                  style: TextStyle(fontStyle: FontStyle.italic, fontSize: 14))
+                                  style: TextStyle(
+                                      fontStyle: FontStyle.italic,
+                                      fontSize: 14))
                             ],
                           )
                         ],
@@ -174,8 +180,8 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                         padding: EdgeInsets.all(0),
                         elevation: 0,
                         onPressed: () async {
-                          var result =
-                              await showSearch(context: context, delegate: StopsSearch(stops));
+                          var result = await showSearch(
+                              context: context, delegate: StopsSearch(stops));
                           if (result != null) {
                             setState(() {
                               stop = result;
@@ -194,9 +200,11 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                                   stop.name,
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
-                              style: TextStyle(fontStyle: FontStyle.italic, fontSize: 14))
+                              style: TextStyle(
+                                  fontStyle: FontStyle.italic, fontSize: 14))
                           : Text('No stop selected',
-                              style: TextStyle(fontStyle: FontStyle.italic, fontSize: 14)),
+                              style: TextStyle(
+                                  fontStyle: FontStyle.italic, fontSize: 14)),
                       (message != '')
                           ? Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -204,7 +212,9 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                                 Icon(Icons.warning, color: Colors.red),
                                 Text(
                                   message,
-                                  style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ],
                             )
@@ -218,12 +228,18 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                           FlatButton(
                             onPressed: Navigator.of(context).pop,
                             child: Text('Cancel',
-                                style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                                style: TextStyle(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold)),
                           ),
                           FlatButton(
                             onPressed: () async {
-                              DateTime returnDate = DateTime(dayPick.year, dayPick.month,
-                                  dayPick.day, timePick.hour, timePick.minute);
+                              DateTime returnDate = DateTime(
+                                  dayPick.year,
+                                  dayPick.month,
+                                  dayPick.day,
+                                  timePick.hour,
+                                  timePick.minute);
                               if (stop == null) {
                                 setState(() {
                                   message = 'Select a stop';
@@ -237,13 +253,15 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                                 print('Writing Reminder');
 
                                 print(returnDate);
-                                await writeReminder(
-                                    Reminder(returnDate, stop, Random().nextInt(pow(10, 6))));
+                                await writeReminder(Reminder(returnDate, stop,
+                                    Random().nextInt(pow(10, 6))));
                                 updateReminders();
                               }
                             },
                             child: Text('Add',
-                                style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
+                                style: TextStyle(
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.bold)),
                           )
                         ],
                       ),
@@ -338,7 +356,8 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             title: Text('${reminder.stop.route} at ${reminder.stop.name}'),
             contentPadding: EdgeInsets.symmetric(horizontal: 24),
             content: (isValid)
@@ -351,7 +370,9 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                   )
                 : Text('Invalid reminder'),
             actions: <Widget>[
-              FlatButton(child: Text('Ok'), onPressed: () => Navigator.of(context).pop())
+              FlatButton(
+                  child: Text('Ok'),
+                  onPressed: () => Navigator.of(context).pop())
             ],
           );
         });
@@ -386,11 +407,13 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                 : () => Navigator.of(context).push(PageRouteBuilder(
                     pageBuilder: (_, __, ___) => CovidTracker(),
                     transitionDuration: Duration(milliseconds: 250),
-                    transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-                        SlideTransition(
-                          position: animation.drive(Tween(begin: Offset(1, 0), end: Offset.zero)),
-                          child: child,
-                        )))),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) =>
+                            SlideTransition(
+                              position: animation.drive(
+                                  Tween(begin: Offset(1, 0), end: Offset.zero)),
+                              child: child,
+                            )))),
         title: Text(
           'Bus Notifier',
           style: TextStyle(fontFamily: 'Rubik'),
@@ -427,13 +450,19 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                                   ),
                                 ),
                                 child: Container(
-                                  margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                                  margin: EdgeInsets.symmetric(
+                                      vertical: 4, horizontal: 8),
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(20),
                                       gradient: LinearGradient(
-                                          colors: (reminders[index].time.isBefore(DateTime.now()))
+                                          colors: (reminders[index]
+                                                  .time
+                                                  .isBefore(DateTime.now()))
                                               ? [Colors.red, Colors.white24]
-                                              : [Colors.deepOrangeAccent, Colors.orange])
+                                              : [
+                                                  Colors.deepOrangeAccent,
+                                                  Colors.orange
+                                                ])
                                       // color: (reminders[index].time.isBefore(DateTime.now()))
                                       // ? Colors.red[200]
                                       // : Colors.white,
@@ -441,30 +470,39 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                                   child: Padding(
                                     padding: EdgeInsets.all(12),
                                     child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
                                       children: <Widget>[
                                         Text(
                                           reminders[index].stop.name,
                                           style: TextStyle(color: Colors.white),
                                         ),
                                         Text(
-                                            DateFormat("EEEE MMMM dd 'at' hh:mm a")
+                                            DateFormat(
+                                                    "EEEE MMMM dd 'at' hh:mm a")
                                                 .format(reminders[index].time),
-                                            style:
-                                                TextStyle(color: Colors.grey[200], fontSize: 13)),
+                                            style: TextStyle(
+                                                color: Colors.grey[200],
+                                                fontSize: 13)),
                                         Text(
                                             reminders[index].stop.route +
                                                 ' towards ' +
-                                                reminders[index].stop.destination,
-                                            style: TextStyle(color: Colors.grey[200], fontSize: 13))
+                                                reminders[index]
+                                                    .stop
+                                                    .destination,
+                                            style: TextStyle(
+                                                color: Colors.grey[200],
+                                                fontSize: 13))
                                       ],
                                     ),
                                   ),
                                 ),
                                 //
                                 direction: DismissDirection.startToEnd,
-                                onDismissed: (DismissDirection direction) async {
+                                onDismissed:
+                                    (DismissDirection direction) async {
                                   await deleteReminder(index);
                                   print('Reminder removed');
                                   updateReminders();
@@ -478,8 +516,8 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
               ),
             ),
       // ****************************************
-      floatingActionButton:
-          FloatingActionButton(onPressed: () => createReminder(context), child: Icon(Icons.add)),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () => createReminder(context), child: Icon(Icons.add)),
     );
   }
 }

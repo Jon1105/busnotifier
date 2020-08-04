@@ -33,10 +33,12 @@ class _DistrictCasesBottomSheetState extends State<DistrictCasesBottomSheet> {
   Map<String, Map<String, int>> getTotalDataByDistrict() {
     Map<String, Map<String, int>> map = {'Total': Map()};
     void incrementFieldAndTotal(String field, Case cAse) {
-      try {
-        map[cAse.district][field] += 1;
-      } catch (_) {
-        map[cAse.district][field] = 1;
+      for (String district in cAse.districts) {
+        try {
+          map[district][field] += 1;
+        } catch (_) {
+          map[district][field] = 1;
+        }
       }
       try {
         map['Total'][field] += 1;
