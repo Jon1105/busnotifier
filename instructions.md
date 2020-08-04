@@ -1,4 +1,5 @@
 # Todo
+- [ ]  ***iOS***
 - [ ] Add daily notification for hk cases
 - [ ] Use google maps api
 - [ ] [gov](https://data.gov.hk/en-data/dataset/hk-dh-chpsebcddr-novel-infectious-agent) api to show location of cases
@@ -10,6 +11,7 @@
 - [ ] Check if data is corect in HK cases info
 - [ ] Complete filter functionality for cases info (dates / days ago, ...)
 - [ ]  ?? Add an *all countries* dashboard
+- [ ]  App Icon
 
 ##### Completed
 

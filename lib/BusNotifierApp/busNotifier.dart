@@ -45,23 +45,9 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
     return reminders;
   }
 
-  Map mapFromReminder(Reminder reminder) {
-    return {
-      "Time": reminder.time.toIso8601String(),
-      "Stop": {
-        'id': reminder.stop.id,
-        'name': reminder.stop.name,
-        'route': reminder.stop.route,
-        'inbound': reminder.stop.inbound,
-        'destination': reminder.stop.destination
-      },
-      "NotificationID": reminder.notificationId,
-    };
-  }
-
   List<Map> remindersToMaps(List<Reminder> reminders) {
     return reminders.map((Reminder listReminder) {
-      return mapFromReminder(listReminder);
+      return listReminder.toMap();
     }).toList();
   }
 
@@ -320,7 +306,7 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
         reminder.time,
         platform,
         androidAllowWhileIdle: false,
-        payload: json.encode(mapFromReminder(reminder)));
+        payload: json.encode(reminder.toMap()));
   }
 
   Future<List<TimeOfDay>> getTimes(Stop stop) async {
