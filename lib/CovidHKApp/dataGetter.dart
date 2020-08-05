@@ -52,7 +52,7 @@ Future<Map<String, dynamic>> hkMoreData() async {
     }
   }
 
-  caseNums.sort((Map case1, Map case2) => case1['num'].compareTo(case2['num']));
+  // caseNums.sort((Map case1, Map case2) => case1['num'].compareTo(case2['num']));
 
   // List<Case> cases = List.generate(caseNums.length, (index) => null);
   List<Case> cases = [];

@@ -4,55 +4,6 @@ import 'package:hkinfo/CovidHKApp/case.dart';
 class CaseParse {
   Case cAse;
   CaseParse(this.cAse);
-
-  // String caseNumS() {
-  //   return cAse.caseNum.toString();
-  // }
-
-  // String reportDateS() {
-  //   return DateFormat('MMMd').format(cAse.reportDate);
-  // }
-
-  // String districtS() {
-  //   return cAse.district;
-  // }
-
-  // String buildingS() {
-  //   return cAse.building;
-  // }
-
-  // String ageS() {
-  //   return cAse.age.toString();
-  // }
-
-  // String maleS() {
-  //   return cAse.male ? 'male' : 'female';
-  // }
-
-  // String onsetS() {
-  //   switch (cAse.onsetStatus) {
-  //     case 'Known':
-  //       return DateFormat('MMMd').format(cAse.onsetDate);
-  //     case 'Unknown':
-  //       return '';
-  //     default:
-  //       return cAse.onsetStatus;
-  //   }
-  // }
-
-  // String lastDateOfResidenceS() {
-  //   return (cAse.lastDateofResidence == null)
-  //       ? ''
-  //       : DateFormat('MMMd').format(cAse.lastDateofResidence);
-  // }
-
-  // String classificationS() {
-  //   return cAse.classification;
-  // }
-
-  // String hkResidentS() {
-  //   return cAse.hkResident ? 'Resident' : 'Non-Resident';
-  // }
   static String caseNum([Case cAse, name = false]) {
     if (name) return 'Case Number';
     return cAse.caseNum.toString();
@@ -89,21 +40,13 @@ class CaseParse {
       return DateFormat('MM/dd/yy').format(cAse.onsetDate);
     else
       return cAse.onsetStatus;
-    // switch (cAse.onsetStatus) {
-    //   case 'Known':
-    //     return DateFormat('MMMd').format(cAse.onsetDate);
-    //   case 'Unknown':
-    //     return '';
-    //   default:
-    //     return cAse.onsetStatus;
-    // }
   }
 
   static String lastDateOfResidence([Case cAse, name = false]) {
     if (name) return 'Last Date of Residence';
     return (cAse.lastDateofResidence == null)
-        ? ''
-        : DateFormat('MMMd').format(cAse.lastDateofResidence);
+        ? '...'
+        : DateFormat('MM/dd/yy').format(cAse.lastDateofResidence);
   }
 
   static String classification([Case cAse, name = false]) {
@@ -116,5 +59,20 @@ class CaseParse {
   static String hkResident([Case cAse, name = false]) {
     if (name) return 'Residency';
     return cAse.hkResident ? 'Resident' : 'Non-Resident';
+  }
+
+  static List<Function> get possibilities {
+    return [
+      CaseParse.caseNum,
+      CaseParse.reportDate,
+      CaseParse.district,
+      CaseParse.building,
+      CaseParse.age,
+      CaseParse.male,
+      CaseParse.onset,
+      CaseParse.lastDateOfResidence,
+      CaseParse.classification,
+      CaseParse.hkResident
+    ];
   }
 }

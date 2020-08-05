@@ -27,18 +27,6 @@ class _CasesInfoState extends State<CasesInfo> {
     CaseParse.reportDate,
     CaseParse.district
   ];
-  List<Function> possibilities = [
-    CaseParse.caseNum,
-    CaseParse.reportDate,
-    CaseParse.district,
-    CaseParse.building,
-    CaseParse.age,
-    CaseParse.male,
-    CaseParse.onset,
-    CaseParse.lastDateOfResidence,
-    CaseParse.classification,
-    CaseParse.hkResident
-  ];
 
   TextEditingController _searchController = TextEditingController();
 
@@ -59,8 +47,7 @@ class _CasesInfoState extends State<CasesInfo> {
             data = rdata;
             filter = CaseFilter(rdata['cases']);
             print('passed');
-            // No filters applied yet
-            cases = filter.cases;
+            cases = rdata['cases'];
             loading = false;
           });
       });
@@ -99,124 +86,173 @@ class _CasesInfoState extends State<CasesInfo> {
         ],
       ),
       body: Theme(
-        data: Theme.of(context).copyWith(canvasColor: Colors.transparent),
-        child: (loading)
-            ? Center(child: CircularProgressIndicator())
-            : (data['error'] != null)
-                ? Center(
-                    child: Column(
+        data: Theme.of(context).copyWith(canvasColor: Colors.black),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(8, 8, 8, 0),
+          child: (loading)
+              ? Center(child: CircularProgressIndicator())
+              : (data['error'] != null)
+                  ? Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          Text(data['errorMsg']),
+                          RaisedButton(
+                              onPressed: updateData,
+                              child: Text('Try again'),
+                              elevation: 0)
+                        ],
+                      ),
+                    )
+                  : Column(
                       mainAxisSize: MainAxisSize.max,
                       children: <Widget>[
-                        Text(data['errorMsg']),
-                        RaisedButton(
-                            onPressed: updateData,
-                            child: Text('Try again'),
-                            elevation: 0)
-                      ],
-                    ),
-                  )
-                : Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: <Widget>[
-                      // Filter Section
-                      Expanded(
-                        flex: 6,
-                        child: Container(
-                          margin: EdgeInsets.all(10),
-                          padding: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              gradient: LinearGradient(colors: [
-                                Colors.lightGreenAccent,
-                                Colors.lightBlueAccent
-                              ])),
-                          child: Column(
-                            children: <Widget>[
-                              Center(
-                                  child: Text('Filters',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headline5)),
-                              Row(
-                                mainAxisSize: MainAxisSize.max,
-                                children: <Widget>[
-                                  Text('Case Range'),
-                                  Expanded(
-                                    child: RangeSlider(
-                                        values: filter.range,
-                                        onChanged: (RangeValues nValues) =>
-                                            setState(
-                                                () => filter.range = nValues),
-                                        min: filter.min,
-                                        max: filter.max,
-                                        divisions:
-                                            (filter.max - filter.min).toInt(),
-                                        labels: RangeLabels(
-                                            filter.range.start
-                                                .toInt()
-                                                .toString(),
-                                            filter.range.end
-                                                .toInt()
-                                                .toString())),
+                        // Filter Section
+                        Expanded(
+                          flex: 6,
+                          child: Container(
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                gradient: LinearGradient(colors: [
+                                  Colors.lightGreenAccent,
+                                  Colors.lightBlueAccent
+                                ])),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Center(
+                                    child: Text('Filters',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline5)),
+                                Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: <Widget>[
+                                    Text('Districts : '),
+                                    Container(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 6),
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          color: Colors.grey.withOpacity(0.5)),
+                                      child: DropdownButtonHideUnderline(
+                                        child: DropdownButton(
+                                          dropdownColor: Colors.white,
+                                          value: filter.district,
+                                          isDense: true,
+                                          onChanged: (String district) =>
+                                              setState(() =>
+                                                  filter.district = district),
+                                          items: CaseFilter.districts
+                                              .map((String district) =>
+                                                  DropdownMenuItem(
+                                                    value: district,
+                                                    child: Text(
+                                                      district,
+                                                      maxLines: 2,
+                                                      style: TextStyle(
+                                                          fontSize: 14),
+                                                    ),
+                                                  ))
+                                              .toList(),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: <Widget>[
+                                    Text('Case Types : '),
+                                    Container(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 6),
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          color: Colors.grey.withOpacity(0.5)),
+                                      child: DropdownButtonHideUnderline(
+                                        child: DropdownButton(
+                                          dropdownColor: Colors.white,
+                                          value: filter.caseClassification,
+                                          isDense: true,
+                                          onChanged: (String classification) =>
+                                              setState(() =>
+                                                  filter.caseClassification =
+                                                      classification),
+                                          items: CaseFilter.caseTypes
+                                              .map((String caseType) =>
+                                                  DropdownMenuItem(
+                                                    value: caseType,
+                                                    child: Text(
+                                                      caseType,
+                                                      maxLines: 2,
+                                                      style: TextStyle(
+                                                          fontSize: 14),
+                                                    ),
+                                                  ))
+                                              .toList(),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    Text('Last 14 days only'),
+                                    SizedBox(
+                                      height: 40,
+                                      child: Checkbox(
+                                          value: filter.fourTeenDaysAgo,
+                                          onChanged: (bool val) => setState(
+                                              () => filter.fourTeenDaysAgo =
+                                                  val)),
+                                    )
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                  child: TextField(
+                                    controller: _searchController,
+                                    maxLines: 1,
+                                    decoration: InputDecoration(
+                                        hintText: 'Search', isDense: true),
                                   ),
-                                ],
-                              ),
-                              Row(
-                                children: <Widget>[
-                                  SizedBox(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.45,
-                                    child: TextField(
-                                      controller: _searchController,
-                                      maxLines: 1,
-                                      decoration: InputDecoration(
-                                          hintText: 'search', isDense: true),
+                                ),
+                                // Spacer(),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: <Widget>[
+                                    Text(cases.length.toString() + ' items'),
+                                    SizedBox(width: 10),
+                                    GestureDetector(
+                                      onTap: () => setState(() {
+                                        _searchController.text = '';
+                                        filter.resetFilter();
+                                        cases = filter.getCases();
+                                      }),
+                                      child: Icon(Icons.clear),
                                     ),
-                                  ),
-                                  Spacer(),
-                                  Text('Last 14 days'),
-                                  Checkbox(
-                                      value: filter.fourTeenDaysAgo,
-                                      onChanged: (bool val) => setState(
-                                          () => filter.fourTeenDaysAgo = val))
-                                ],
-                              ),
-                              Row(
-                                children: <Widget>[],
-                              ),
-                              Spacer(),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                mainAxisSize: MainAxisSize.max,
-                                children: <Widget>[
-                                  Text(cases.length.toString() + ' items'),
-                                  IconButton(
-                                      onPressed: () => setState(() {
-                                            _searchController.text = '';
-                                            filter.resetFilter();
-                                            cases = filter.getCases();
-                                          }),
-                                      icon: Icon(Icons.clear)),
-                                  IconButton(
-                                    padding: EdgeInsets.zero,
-                                    onPressed: () => setState(() {
-                                      filter.textSearch =
-                                          _searchController.text;
-                                      cases = filter.getCases();
-                                    }),
-                                    icon: Icon(Icons.search,
-                                        color: Theme.of(context).accentColor),
-                                  ),
-                                ],
-                              ),
-                            ],
+                                    SizedBox(width: 10),
+                                    GestureDetector(
+                                      onTap: () => setState(() {
+                                        filter.textSearch =
+                                            _searchController.text;
+                                        cases = filter.getCases();
+                                      }),
+                                      child: Icon(Icons.search),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: List.generate(values.length, (i) => i)
                                 .map((int idx) {
                               int flex;
@@ -224,35 +260,46 @@ class _CasesInfoState extends State<CasesInfo> {
                               values.forEach((val) {
                                 if (val == CaseParse.building)
                                   total += 4;
-                                // else if (val == CaseParse.age ||
-                                //     val == CaseParse.caseNum)
-                                //   total += 1;
-                                // else if (val == CaseParse.onset )
                                 else
                                   total += 2;
                               });
                               if (values[idx] == CaseParse.building)
                                 flex = 4;
-                              // else if (values[idx] == CaseParse.age ||
-                              //     values[idx] == CaseParse.caseNum)
-                              //   flex = 1;
                               else
                                 flex = 2;
                               double width =
-                                  (MediaQuery.of(context).size.width *
-                                          0.8 /
-                                          total) *
-                                      flex;
+                                  ((MediaQuery.of(context).size.width *
+                                              0.8 /
+                                              total) *
+                                          flex) -
+                                      16 / total * flex;
                               return SizedBox(
                                 height: 40,
                                 child: DropdownButtonHideUnderline(
-                                  // alignedDropdown: true,
                                   child: DropdownButton(
                                     dropdownColor: Colors.white,
                                     isDense: true,
                                     // underline: Container(),
                                     value: values[idx],
-                                    items: possibilities
+                                    selectedItemBuilder:
+                                        (BuildContext context) {
+                                      return CaseParse.possibilities
+                                          .map((Function func) =>
+                                              ConstrainedBox(
+                                                constraints: BoxConstraints(
+                                                    maxWidth: width),
+                                                child: Text(
+                                                  func(null, true),
+                                                  maxLines: 1,
+                                                  style:
+                                                      TextStyle(fontSize: 15),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ))
+                                          .toList();
+                                    },
+                                    items: CaseParse.possibilities
                                         .map(
                                             (Function func) => DropdownMenuItem(
                                                 value: func,
@@ -261,7 +308,9 @@ class _CasesInfoState extends State<CasesInfo> {
                                                       maxWidth: width),
                                                   child: Text(
                                                     func(null, true),
-                                                    maxLines: 2,
+                                                    maxLines: 3,
+                                                    style:
+                                                        TextStyle(fontSize: 14),
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                   ),
@@ -274,125 +323,169 @@ class _CasesInfoState extends State<CasesInfo> {
                                 ),
                               );
                             }).toList()),
-                      ),
-                      Expanded(
-                        flex: 12,
-                        child: Stack(
-                          children: <Widget>[
-                            Scrollbar(
-                              isAlwaysShown: true,
-                              controller: _scrollController,
-                              child: ListView.builder(
-                                  controller: _scrollController,
-                                  itemExtent: 60,
-                                  reverse: !filter.ascending,
-                                  itemCount: cases.length,
-                                  itemBuilder: (BuildContext context, int i) {
-                                    return SizedBox(
-                                      // height: 20,
-                                      child: FlatButton(
-                                        onPressed: () => showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) =>
-                                                Dialog(
-                                                  child: Container(
-                                                    padding: EdgeInsets.all(10),
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: <Widget>[
-                                                        Center(
-                                                          child: Text(
-                                                            'Case ${cases[i].caseNum}',
-                                                            style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500),
-                                                          ),
+
+                        // Expanded(
+                        //   flex: 12,
+                        //   child: Scrollbar(
+                        //     child: SingleChildScrollView(
+                        //       child: DataTable(
+                        //           columnSpacing: 10,
+                        //           columns:
+                        //               values.map<DataColumn>((Function func) {
+                        //             return DataColumn(
+                        //                 numeric: func == CaseParse.age ||
+                        //                     func == CaseParse.caseNum,
+                        //                 label: Text(func(null, true)));
+                        //           }).toList(),
+                        //           rows: cases.map<DataRow>((Case cAse) {
+                        //             return DataRow(
+                        //                 cells: values
+                        //                     .map<DataCell>((Function func) {
+                        //               return DataCell(Text(func(cAse)));
+                        //             }).toList());
+                        //           }).toList()),
+                        //     ),
+                        //   ),
+                        // ),
+                        Expanded(
+                          flex: 12,
+                          child: Stack(
+                            children: <Widget>[
+                              Scrollbar(
+                                isAlwaysShown: true,
+                                controller: _scrollController,
+                                child: ListView.builder(
+                                    controller: _scrollController,
+                                    itemExtent:
+                                        values.contains(CaseParse.building)
+                                            ? 60
+                                            : 40,
+                                    reverse: !filter.ascending,
+                                    itemCount: cases.length,
+                                    itemBuilder: (BuildContext context, int i) {
+                                      return Column(
+                                        children: <Widget>[
+                                          SizedBox(
+                                            // height: 20,
+                                            child: GestureDetector(
+                                              onTap: () => showBottomSheet(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        Container(
+                                                  padding: EdgeInsets.all(10),
+                                                  color: Colors.brown,
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: <Widget>[
+                                                      Center(
+                                                        child: Text(
+                                                          'Case ${cases[i].caseNum}',
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500),
                                                         ),
-                                                        Text(
-                                                            'Report Date: ${DateFormat('yyyy-MM-dd').format(cases[i].reportDate)}'),
-                                                        Text(
-                                                            'Districts: ${cases[i].district}'),
-                                                        Text(
-                                                            'Building: ${cases[i].building}'),
-                                                        Text(
-                                                            'Age: ${cases[i].age}'),
-                                                        Text(
-                                                            'Gender: ${cases[i].male ? 'male' : 'female'}'),
-                                                        Text(
-                                                            'Onset Date: ${cases[i].onsetDate != null ? DateFormat('yyyy-MM-dd').format(cases[i].onsetDate) : cases[i].onsetStatus}'),
-                                                        Text(
-                                                            'Classification: ${cases[i].classification}'),
-                                                        Text(
-                                                            'Residency: ${cases[i].hkResident ? 'HK resident' : 'Non Resident'}'),
-                                                        Text(
-                                                            'Last Date of Residence: ${cases[i].lastDateofResidence != null ? DateFormat('yyyy-MM-dd').format(cases[i].lastDateofResidence) : '...'}'),
-                                                      ],
-                                                    ),
+                                                      ),
+                                                      Text(
+                                                          'Report Date: ${DateFormat('yyyy-MM-dd').format(cases[i].reportDate)}'),
+                                                      Text(
+                                                          'Districts: ${cases[i].district}'),
+                                                      Text(
+                                                          'Building: ${cases[i].building}'),
+                                                      Text(
+                                                          'Age: ${cases[i].age}'),
+                                                      Text(
+                                                          'Gender: ${cases[i].male ? 'male' : 'female'}'),
+                                                      Text(
+                                                          'Onset Date: ${cases[i].onsetDate != null ? DateFormat('yyyy-MM-dd').format(cases[i].onsetDate) : cases[i].onsetStatus}'),
+                                                      Text(
+                                                          'Classification: ${cases[i].classification}'),
+                                                      Text(
+                                                          'Residency: ${cases[i].hkResident ? 'HK resident' : 'Non Resident'}'),
+                                                      Text(
+                                                          'Last Date of Residence: ${cases[i].lastDateofResidence != null ? DateFormat('yyyy-MM-dd').format(cases[i].lastDateofResidence) : '...'}'),
+                                                    ],
                                                   ),
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20)),
-                                                )),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                          children: values.map((Function func) {
-                                            int flex;
-                                            if (func == CaseParse.building)
-                                              flex = 4;
-                                            // else if (func == CaseParse.age ||
-                                            //     func == CaseParse.caseNum)
-                                            //   flex = 1;
-                                            else
-                                              flex = 2;
-                                            return Expanded(
-                                                flex: flex,
-                                                child: Text(
-                                                  func(cases[i]),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  maxLines: 3,
-                                                ));
-                                          }).toList(),
-                                        ),
-                                      ),
-                                    );
-                                  }),
-                            ),
-                            Container(
-                                child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: <Widget>[
-                                IconButton(
-                                    color: Theme.of(context).iconTheme.color,
-                                    onPressed: goToTop,
-                                    icon: Icon(Icons.keyboard_arrow_up)),
-                                IconButton(
-                                  // elevation: 0,
-                                  padding: EdgeInsets.zero,
-                                  onPressed: () {
-                                    setState(() {
-                                      filter.ascending = !filter.ascending;
-                                    });
-                                    goToTop();
-                                  },
-                                  icon: Icon(filter.ascending
-                                      ? Icons.arrow_drop_down
-                                      : Icons.arrow_drop_up),
-                                )
-                              ],
-                            )),
-                          ],
+                                                ),
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceAround,
+                                                children:
+                                                    values.map((Function func) {
+                                                  int flex;
+                                                  if (func ==
+                                                      CaseParse.building)
+                                                    flex = 4;
+                                                  // else if (func == CaseParse.age ||
+                                                  //     func == CaseParse.caseNum)
+                                                  //   flex = 1;
+                                                  else
+                                                    flex = 2;
+                                                  var data = func(cases[i]);
+                                                  return Expanded(
+                                                      flex: flex,
+                                                      child: Text(
+                                                        data,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        maxLines: 2,
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w200),
+                                                        textAlign:
+                                                            (int.tryParse(
+                                                                        data) !=
+                                                                    null)
+                                                                ? TextAlign
+                                                                    .center
+                                                                : null,
+                                                      ));
+                                                }).toList(),
+                                              ),
+                                            ),
+                                          ),
+                                          Divider()
+                                        ],
+                                      );
+                                    }),
+                              ),
+                              Container(
+                                  child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: <Widget>[
+                                  IconButton(
+                                      color: Theme.of(context).iconTheme.color,
+                                      onPressed: goToTop,
+                                      icon: Icon(Icons.keyboard_arrow_up)),
+                                  IconButton(
+                                    // elevation: 0,
+                                    padding: EdgeInsets.zero,
+                                    onPressed: () {
+                                      setState(() {
+                                        filter.ascending = !filter.ascending;
+                                      });
+                                      goToTop();
+                                    },
+                                    icon: Icon(filter.ascending
+                                        ? Icons.arrow_drop_down
+                                        : Icons.arrow_drop_up),
+                                  )
+                                ],
+                              )),
+                            ],
+                          ),
                         ),
-                      )
-                    ],
-                  ),
+                      ],
+                    ),
+        ),
       ),
     );
   }

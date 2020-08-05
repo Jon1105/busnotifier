@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hkinfo/CovidHKApp/case.dart';
 import 'package:hkinfo/CovidApp/parser.dart';
+import 'package:hkinfo/CovidHKApp/filter.dart';
 
 class DistrictCasesBottomSheet extends StatefulWidget {
   final Map<String, dynamic> data;
@@ -81,63 +82,7 @@ class _DistrictCasesBottomSheetState extends State<DistrictCasesBottomSheet> {
     // set num
 
     for (String district in map.keys) {
-      switch (district) {
-        case 'Islands':
-          map[district]['districtNum'] = 1;
-          break;
-        case 'Kwai Tsing':
-          map[district]['districtNum'] = 2;
-          break;
-        case 'North':
-          map[district]['districtNum'] = 3;
-          break;
-        case 'Sai Kung':
-          map[district]['districtNum'] = 4;
-          break;
-        case 'Sha Tin':
-          map[district]['districtNum'] = 5;
-          break;
-        case 'Tai Po':
-          map[district]['districtNum'] = 6;
-          break;
-        case 'Tsuen Wan':
-          map[district]['districtNum'] = 7;
-          break;
-        case 'Tuen Mun':
-          map[district]['districtNum'] = 8;
-          break;
-        case 'Yuen Long':
-          map[district]['districtNum'] = 9;
-          break;
-        case 'Kowloon CIty':
-          map[district]['districtNum'] = 10;
-          break;
-        case 'Kwun Tong':
-          map[district]['districtNum'] = 11;
-          break;
-        case 'Sham Shui Po':
-          map[district]['districtNum'] = 12;
-          break;
-        case 'Wong Tai SIn':
-          map[district]['districtNum'] = 13;
-          break;
-        case 'Yau Tsim Mong':
-          map[district]['districtNum'] = 14;
-          break;
-        case 'Central & Western':
-          map[district]['districtNum'] = 15;
-          break;
-        case 'Eastern':
-          map[district]['districtNum'] = 16;
-          break;
-        case 'Southern':
-          map[district]['districtNum'] = 17;
-          break;
-        case 'Wan Chai':
-          map[district]['districtNum'] = 18;
-          break;
-        default:
-      }
+      map[district]['districtNum'] = CaseFilter.districts.indexOf(district);
     }
 
     return map;
