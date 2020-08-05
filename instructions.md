@@ -15,6 +15,7 @@
 - [ ]  Error: setState() called after dispose() - when screen is disposed of before page is done loading
 - [ ]  Make list of stops editable when choosing which to add
 - [ ]  ?? Be able to edit stops
+- [ ]  Optimize data loading (sorting, ...) which causes frames to jump when loading more info for hk
 
 ##### Completed
 
