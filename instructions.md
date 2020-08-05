@@ -12,13 +12,13 @@
 - [ ]  ?? Add an *all countries* dashboard
 - [ ]  App Icon
 - [ ]  Use [DataTable](https://www.youtube.com/watch?v=ktTajqbhIcY&vl=en) with Single Child Scroll View
-- [ ]  Error: setState() called after dispose() - when screen is disposed of before page is done loading
 - [ ]  Make list of stops editable when choosing which to add
 - [ ]  ?? Be able to edit stops
 - [ ]  Optimize data loading (sorting, ...) which causes frames to jump when loading more info for hk
 
 ##### Completed
 
+- [x]  Error: setState() called after dispose() - when screen is disposed of before page is done loading
 - [x] Add multiple stop functionality
 - [x] Fix onset Date
 - [x] Why some cases have duplicates (e.g. case 3397 - 3368)
