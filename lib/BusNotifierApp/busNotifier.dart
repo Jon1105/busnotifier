@@ -273,14 +273,16 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
   }
 
   void updateReminders() {
-    setState(() {
-      loading = true;
-    });
-    readReminders().then((List<Reminder> readReminders) {
+    if (mounted)
       setState(() {
-        reminders = readReminders;
-        loading = false;
+        loading = true;
       });
+    readReminders().then((List<Reminder> readReminders) {
+      if (mounted)
+        setState(() {
+          reminders = readReminders;
+          loading = false;
+        });
     });
   }
 

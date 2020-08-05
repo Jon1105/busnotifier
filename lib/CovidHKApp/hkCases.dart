@@ -49,19 +49,22 @@ class _CasesInfoState extends State<CasesInfo> {
   }
 
   void updateData() {
-    setState(() {
-      loading = true;
-    });
-    widget.country
-        .moreInfoDataGetter()
-        .then((Map<String, dynamic> rdata) => setState(() {
-              data = rdata;
-              filter = CaseFilter(rdata['cases']);
-              print('passed');
-              // No filters applied yet
-              cases = filter.cases;
-              loading = false;
-            }));
+    if (mounted) {
+      setState(() {
+        loading = true;
+      });
+      widget.country.moreInfoDataGetter().then((Map<String, dynamic> rdata) {
+        if (mounted)
+          setState(() {
+            data = rdata;
+            filter = CaseFilter(rdata['cases']);
+            print('passed');
+            // No filters applied yet
+            cases = filter.cases;
+            loading = false;
+          });
+      });
+    }
   }
 
   void goToTop() {

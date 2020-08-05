@@ -65,15 +65,17 @@ class _CovidTrackerState extends State<CovidTracker> {
   }
 
   void updateData([override = false]) {
-    setState(() {
-      loading = true;
+    if (mounted)
+      setState(() {
+        loading = true;
+      });
+    country.dataGetter(override: override).then((Map<String, dynamic> rdata) {
+      if (mounted)
+        setState(() {
+          data = rdata;
+          loading = false;
+        });
     });
-    country
-        .dataGetter(override: override)
-        .then((Map<String, dynamic> rdata) => setState(() {
-              data = rdata;
-              loading = false;
-            }));
   }
 
   @override
@@ -107,7 +109,7 @@ class _CovidTrackerState extends State<CovidTracker> {
                       context: context, delegate: CountrySearch(countries));
                   if (cntry != null) {
                     setState(() => country = cntry);
-                    updateData();
+                    updateData(false);
                     _scaffoldKey.currentState.removeCurrentSnackBar(
                         reason: SnackBarClosedReason.dismiss);
                     showBar();
