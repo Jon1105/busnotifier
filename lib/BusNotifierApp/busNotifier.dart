@@ -10,7 +10,6 @@ import 'package:hkinfo/BusNotifierApp/stopClass.dart';
 import 'package:hkinfo/BusNotifierApp/ReminderClass.dart';
 import 'package:hkinfo/BusNotifierApp/stops.dart' as allStops;
 import 'package:http/http.dart' as http;
-import 'package:hkinfo/CovidApp/covid.dart';
 
 class BusNotifierPage extends StatefulWidget {
   @override

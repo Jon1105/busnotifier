@@ -6,7 +6,6 @@ import 'package:hkinfo/CovidApp/countries.dart';
 import 'package:hkinfo/CovidApp/countrySearch.dart';
 import 'package:hkinfo/CovidHKApp/hkCases.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:hkinfo/main.dart';
 
 class CovidTracker extends StatefulWidget {
   @override
