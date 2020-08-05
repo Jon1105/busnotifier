@@ -6,15 +6,19 @@
 - [ ] Bug: Fix deaths scale
 - [ ] Change countries.dart to json file
 - [ ] Create interchangeable themes
-- [ ] Add multiple stop functionality
 - [ ] Preserve current country when switching between pages in PageView
 - [ ] Check if data is corect in HK cases info
-- [ ] Complete filter functionality for cases info (dates / days ago, ...)
+- [ ] Complete filter functionality for cases info (dates / days ago, ...) : Choose which districts, Link cases, Remove Case Range slider
 - [ ]  ?? Add an *all countries* dashboard
 - [ ]  App Icon
+- [ ]  Use [DataTable](https://www.youtube.com/watch?v=ktTajqbhIcY&vl=en) with Single Child Scroll View
+- [ ]  Error: setState() called after dispose() - when screen is disposed of before page is done loading
+- [ ]  Make list of stops editable when choosing which to add
+- [ ]  ?? Be able to edit stops
 
 ##### Completed
 
+- [x] Add multiple stop functionality
 - [x] Fix onset Date
 - [x] Why some cases have duplicates (e.g. case 3397 - 3368)
 - [x] Show Dropdowns over case list to choose which fields to show

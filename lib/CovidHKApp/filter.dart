@@ -76,7 +76,7 @@ class CaseFilter {
 
   void resetFilter() {
     this.range = RangeValues(this.min, this.max);
-    this.dateRange;
+    // this.dateRange;
     this.fourTeenDaysAgo = false;
     this.textSearch = '';
   }

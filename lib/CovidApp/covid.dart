@@ -82,14 +82,6 @@ class _CovidTrackerState extends State<CovidTracker> {
     return Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          leading: IconButton(
-              icon: Icon(Icons.directions_bus),
-              onPressed: true
-                  ? null
-                  : () => globalPageController.animateToPage(0,
-                      duration: Duration(milliseconds: 500),
-                      curve: Curves.elasticInOut)),
-          // elevation: 0,
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[

@@ -8,7 +8,7 @@ import 'dart:math';
 import 'package:hkinfo/BusNotifierApp/pickStop.dart';
 import 'package:hkinfo/BusNotifierApp/stopClass.dart';
 import 'package:hkinfo/BusNotifierApp/ReminderClass.dart';
-import 'package:hkinfo/BusNotifierApp/stops.dart';
+import 'package:hkinfo/BusNotifierApp/stops.dart' as allStops;
 import 'package:http/http.dart' as http;
 import 'package:hkinfo/CovidApp/covid.dart';
 
@@ -28,27 +28,24 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
     bool fileExists = await file.exists();
     if (!fileExists) {
       await file.create();
-      await file.writeAsString(json.encode({"reminders": []}));
+      // await file.writeAsString(json.encode({"reminders": []}));
     }
     return file;
   }
 
   Future<List<Reminder>> readReminders() async {
-    // try {
     final file = await _remindersFile;
     String contents = await file.readAsString();
-    Map dartContent = json.decode(contents);
-    reminders = [];
-    for (Map mapReminder in dartContent['reminders']) {
-      reminders.add(Reminder.fromMap(mapReminder));
-    }
-    return reminders;
+    if (contents == '') return [];
+    return json.decode(contents).map<Reminder>((mapReminder) {
+      return Reminder.fromMap(mapReminder);
+    }).toList();
   }
 
   List<Map> remindersToMaps(List<Reminder> reminders) {
-    return reminders.map((Reminder listReminder) {
-      return listReminder.toMap();
-    }).toList();
+    return reminders
+        .map((Reminder listReminder) => listReminder.toMap())
+        .toList();
   }
 
   Future<void> writeReminder(Reminder reminder) async {
@@ -57,18 +54,16 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
     List<Reminder> reminders = await readReminders();
     reminders.add(reminder);
     reminders.sort((Reminder reminder1, Reminder reminder2) {
-      if (reminder1.time == reminder2.time) {
+      if (reminder1.time == reminder2.time)
         return 0;
-      } else if (reminder1.time.isAfter(reminder2.time)) {
+      else if (reminder1.time.isAfter(reminder2.time))
         return 1;
-      } else if (reminder1.time.isBefore(reminder2.time)) {
-        return -1;
-      }
+      else if (reminder1.time.isBefore(reminder2.time)) return -1;
       return null;
     });
     List<Map> mapReminders = remindersToMaps(reminders);
     final file = await _remindersFile;
-    file.writeAsString(json.encode({"reminders": mapReminders}));
+    file.writeAsString(json.encode(mapReminders));
   }
 
   Future<void> deleteReminder(int index) async {
@@ -81,7 +76,7 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
       print('No notification scheduled');
     }
     reminders.removeAt(index);
-    file.writeAsString(json.encode({"reminders": remindersToMaps(reminders)}));
+    file.writeAsString(json.encode(remindersToMaps(reminders)));
   }
 
   void createReminder(BuildContext context) {
@@ -89,7 +84,7 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
 
     DateTime dayPick = now;
     TimeOfDay timePick = TimeOfDay(hour: 16, minute: 30);
-    Stop stop;
+    List<Stop> stops = [];
 
     String message = '';
 
@@ -167,30 +162,53 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                         elevation: 0,
                         onPressed: () async {
                           var result = await showSearch(
-                              context: context, delegate: StopsSearch(stops));
+                              context: context,
+                              delegate: StopsSearch(allStops.stops));
                           if (result != null) {
                             setState(() {
-                              stop = result;
+                              stops.add(result);
                               message = '';
                             });
                           }
                         },
-                        child: Text('Pick stop'),
+                        child: Text('Add stop'),
                       ),
-                      (stop != null)
-                          ? Text(
-                              stop.route +
-                                  ' ' +
-                                  ((stop.inbound) ? 'Inbound' : 'Outbound') +
-                                  ': ' +
-                                  stop.name,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                              style: TextStyle(
-                                  fontStyle: FontStyle.italic, fontSize: 14))
-                          : Text('No stop selected',
-                              style: TextStyle(
-                                  fontStyle: FontStyle.italic, fontSize: 14)),
+                      (stops.isNotEmpty)
+                          ? Center(
+                              child: Text(
+                                stops
+                                    .map(
+                                      (Stop stop) =>
+                                          stop.route +
+                                          ' ' +
+                                          ((stop.inbound)
+                                              ? 'Inbound'
+                                              : 'Outbound') +
+                                          ': ' +
+                                          stop.name,
+                                    )
+                                    .toList()
+                                    .join('\n'),
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontStyle: FontStyle.italic, fontSize: 14),
+                              ),
+                            )
+                          : Container(),
+                      // (stop != null)
+                      //     ? Text(
+                      //         stop.route +
+                      //             ' ' +
+                      //             ((stop.inbound) ? 'Inbound' : 'Outbound') +
+                      //             ': ' +
+                      //             stop.name,
+                      //         overflow: TextOverflow.ellipsis,
+                      //         maxLines: 1,
+                      //         style: TextStyle(
+                      //             fontStyle: FontStyle.italic, fontSize: 14))
+                      //     : Text('No stop selected',
+                      //         style: TextStyle(
+                      //             fontStyle: FontStyle.italic, fontSize: 14)),
                       (message != '')
                           ? Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -226,7 +244,7 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                                   dayPick.day,
                                   timePick.hour,
                                   timePick.minute);
-                              if (stop == null) {
+                              if (stops == null || stops.length <= 0) {
                                 setState(() {
                                   message = 'Select a stop';
                                 });
@@ -236,12 +254,9 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                                 });
                               } else {
                                 Navigator.of(context).pop();
-                                print('Writing Reminder');
-
-                                print(returnDate);
-                                await writeReminder(Reminder(returnDate, stop,
-                                    Random().nextInt(pow(10, 6))));
-                                updateReminders();
+                                writeReminder(Reminder(returnDate, stops,
+                                        Random().nextInt(pow(10, 6))))
+                                    .then((_) => updateReminders());
                               }
                             },
                             child: Text('Add',
@@ -298,13 +313,12 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
       importance: Importance.Max,
     );
     var iOS = IOSNotificationDetails();
-    var platform = NotificationDetails(android, iOS);
     await flutterLocalNotificationsPlugin.schedule(
         reminder.notificationId,
-        'Bus ${reminder.stop.route} at ${reminder.stop.name}',
-        'To ${reminder.stop.destination}',
+        'Bus Time Notifier',
+        'For ${DateFormat("EEEE MMMM dd 'at' hh:mm a").format(reminder.time)}',
         reminder.time,
-        platform,
+        NotificationDetails(android, iOS),
         androidAllowWhileIdle: false,
         payload: json.encode(reminder.toMap()));
   }
@@ -335,7 +349,14 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
 
   Future<void> onSelectNotification(String payload) async {
     Reminder reminder = Reminder.fromMap(json.decode(payload));
-    List<TimeOfDay> times = await getTimes(reminder.stop);
+    Map<String, List> times = Map();
+    for (Stop stop in reminder.stops) {
+      times[stop.name] = await getTimes(stop);
+    }
+
+    // reminder.stops.forEach((Stop stop) async {
+    //   times[stop.name] = await getTimes(stop);
+    // });
     bool isValid = times.isNotEmpty;
     showDialog(
         barrierDismissible: false,
@@ -344,17 +365,42 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
           return AlertDialog(
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            title: Text('${reminder.stop.route} at ${reminder.stop.name}'),
+            title: Text('Bus Time Notifier'),
             contentPadding: EdgeInsets.symmetric(horizontal: 24),
-            content: (isValid)
-                ? Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: times.map((TimeOfDay time) {
-                      return Text(time.format(context));
+            content: isValid
+                ? Table(
+                    children: List.generate(4, (i) => i - 1).map((int i) {
+                      if (i == -1) {
+                        return TableRow(
+                            children: reminder.stops
+                                .map<Widget>((Stop stop) => Text(
+                                    stop.route + ', ' + stop.name,
+                                    maxLines: 2))
+                                .toList());
+                      }
+                      return TableRow(
+                          children: times.keys.map((String stopName) {
+                        TimeOfDay time;
+                        try {
+                          time = times[stopName][i];
+                          return Text(time.format(context));
+                        } catch (_) {
+                          return Text('.');
+                        }
+                      }).toList());
                     }).toList(),
                   )
-                : Text('Invalid reminder'),
+                : Text('Invalid '),
+
+            // content: (isValid)
+            //     ? Column(
+            //         mainAxisSize: MainAxisSize.min,
+            //         crossAxisAlignment: CrossAxisAlignment.start,
+            //         children: times.map((TimeOfDay time) {
+            //           return Text(time.format(context));
+            //         }).toList(),
+            //       )
+            //     : Text('Invalid reminder'),
             actions: <Widget>[
               FlatButton(
                   child: Text('Ok'),
@@ -362,7 +408,6 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
             ],
           );
         });
-    return null;
   }
 
   @override
@@ -386,20 +431,6 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-            icon: Icon(Icons.person),
-            onPressed: true
-                ? null
-                : () => Navigator.of(context).push(PageRouteBuilder(
-                    pageBuilder: (_, __, ___) => CovidTracker(),
-                    transitionDuration: Duration(milliseconds: 250),
-                    transitionsBuilder:
-                        (context, animation, secondaryAnimation, child) =>
-                            SlideTransition(
-                              position: animation.drive(
-                                  Tween(begin: Offset(1, 0), end: Offset.zero)),
-                              child: child,
-                            )))),
         title: Text(
           'Bus Notifier',
           style: TextStyle(fontFamily: 'Rubik'),
@@ -444,7 +475,7 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                                           colors: (reminders[index]
                                                   .time
                                                   .isBefore(DateTime.now()))
-                                              ? [Colors.red, Colors.white24]
+                                              ? [Colors.red, Colors.white]
                                               : [
                                                   Colors.deepOrangeAccent,
                                                   Colors.orange
@@ -462,22 +493,37 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                                           CrossAxisAlignment.stretch,
                                       children: <Widget>[
                                         Text(
-                                          reminders[index].stop.name,
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                        Text(
                                             DateFormat(
-                                                    "EEEE MMMM dd 'at' hh:mm a")
+                                                    "EEEE MMMM dd 'at' hh:mm a '(${reminders[index].stops.length})'")
                                                 .format(reminders[index].time),
-                                            style: TextStyle(
-                                                color: Colors.grey[200],
-                                                fontSize: 13)),
+                                            style:
+                                                TextStyle(color: Colors.white)),
+                                        reminders[index].stops.length == 1
+                                            ? Text(
+                                                reminders[index].stops[0].name,
+                                                style: TextStyle(
+                                                    color: Colors.grey[200],
+                                                    fontSize: 13),
+                                              )
+                                            : Container(),
                                         Text(
-                                            reminders[index].stop.route +
-                                                ' towards ' +
-                                                reminders[index]
-                                                    .stop
-                                                    .destination,
+                                            reminders[index].stops.length == 1
+                                                ? reminders[index]
+                                                        .stops[0]
+                                                        .route +
+                                                    ' towards ' +
+                                                    reminders[index]
+                                                        .stops[0]
+                                                        .destination
+                                                : reminders[index]
+                                                    .stops
+                                                    .map((Stop stop) {
+                                                      return '${stop.route} ${stop.inbound ? 'Inbound' : 'Outbound'} - ${stop.name}';
+                                                    })
+                                                    .toList()
+                                                    .join('\n'),
+                                            // maxLines:
+                                            //     reminders[index].stops.length,
                                             style: TextStyle(
                                                 color: Colors.grey[200],
                                                 fontSize: 13))

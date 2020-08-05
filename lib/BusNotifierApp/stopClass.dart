@@ -8,7 +8,7 @@ class Stop {
     inbound = (strDir == 'I') ? true : false;
   }
 
-  static Stop fromMap(Map<String, String> stopMap) {
+  static Stop fromMap(stopMap) {
     return Stop(stopMap['id'], stopMap['name'], stopMap['route'],
         stopMap['direction'], stopMap['destination']);
   }

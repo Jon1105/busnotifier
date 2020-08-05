@@ -47,7 +47,7 @@ Future<Map<String, dynamic>> hkMoreData() async {
           .toList()) {
         caseNums.add({'num': cAse, 'buildingDetail': building});
       }
-    } on FormatException catch (e) {
+    } on FormatException catch (_) {
       continue;
     }
   }

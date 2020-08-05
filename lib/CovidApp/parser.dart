@@ -39,7 +39,7 @@ String firstUpper(String string) {
   return string[0].toUpperCase() + string.substring(1);
 }
 
-String numComma(double number) {
-  String s = number.toString();
+// String numComma(double number) {
+//   String s = number.toString();
   
-}
+// }
