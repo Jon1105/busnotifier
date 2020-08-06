@@ -124,7 +124,8 @@ class _CovidChartState extends State<CovidChart> {
         : 'Cases'; //(widget.country.hasRecovered) ? 'Cases & Recovered' : 'Cases';
 
     return Container(
-        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        margin:
+            EdgeInsets.symmetric(vertical: 5, horizontal: 10).copyWith(top: 0),
         padding: EdgeInsets.all(15),
         decoration: widget.boxDeco.copyWith(
             gradient: LinearGradient(

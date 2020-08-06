@@ -16,6 +16,7 @@ class _CovidTrackerState extends State<CovidTracker> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   Country country = countries[0]; // HK by default
   bool loading = true;
+  bool reloading = false;
   Map<String, dynamic> data = {};
   BoxDecoration boxDeco =
       BoxDecoration(borderRadius: BorderRadius.circular(30));
@@ -78,6 +79,21 @@ class _CovidTrackerState extends State<CovidTracker> {
     });
   }
 
+  void reloadData() {
+    // override is always true
+    if (mounted)
+      setState(() {
+        reloading = true;
+      });
+    country.dataGetter(override: true).then((Map<String, dynamic> rdata) {
+      if (mounted)
+        setState(() {
+          data = rdata;
+          reloading = false;
+        });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,11 +113,7 @@ class _CovidTrackerState extends State<CovidTracker> {
             ],
           ),
           actions: <Widget>[
-            IconButton(
-                icon: Icon(Icons.refresh),
-                onPressed: () {
-                  updateData(true);
-                }),
+            IconButton(icon: Icon(Icons.refresh), onPressed: reloadData),
             IconButton(
                 icon: Icon(Icons.search),
                 onPressed: () async {
@@ -134,6 +146,9 @@ class _CovidTrackerState extends State<CovidTracker> {
                   )
                 : Column(
                     children: <Widget>[
+                      reloading
+                          ? LinearProgressIndicator()
+                          : Container(height: 6),
                       CovidChart(data, country, boxDeco),
                       Container(
                           margin: margin,
