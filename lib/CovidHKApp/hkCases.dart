@@ -17,6 +17,7 @@ class CasesInfo extends StatefulWidget {
 class _CasesInfoState extends State<CasesInfo> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool loading = true;
+  bool reloading = false;
   Map<String, dynamic> data;
   List<Case> cases;
   // bool ascending = true;
@@ -54,6 +55,23 @@ class _CasesInfoState extends State<CasesInfo> {
     }
   }
 
+  void reloadData() {
+    if (mounted)
+      setState(() {
+        reloading = true;
+      });
+    widget.country.moreInfoDataGetter().then((Map<String, dynamic> rdata) {
+      if (mounted)
+        setState(() {
+          data = rdata;
+          filter = CaseFilter(rdata['cases']);
+          print('passed');
+          cases = rdata['cases'];
+          reloading = false;
+        });
+    });
+  }
+
   void goToTop() {
     // _scrollController.jumpTo(ascending ? 0 : _scrollController.position.maxScrollExtent);
     _scrollController.animateTo(
@@ -79,179 +97,191 @@ class _CasesInfoState extends State<CasesInfo> {
                   ? null
                   : () {
                       _scaffoldKey.currentState.showBottomSheet(
-                          (BuildContext _) => DistrictCasesBottomSheet(data));
+                          (BuildContext _) =>
+                              DistrictCasesBottomSheet(data['count']));
                     }),
           IconButton(
-              icon: Icon(Icons.refresh), onPressed: loading ? null : updateData)
+              icon: Icon(Icons.refresh), onPressed: loading ? null : reloadData)
         ],
       ),
       body: Theme(
         data: Theme.of(context).copyWith(canvasColor: Colors.black),
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(8, 8, 8, 0),
-          child: (loading)
-              ? Center(child: CircularProgressIndicator())
-              : (data['error'] != null)
-                  ? Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          Text(data['errorMsg']),
-                          RaisedButton(
-                              onPressed: updateData,
-                              child: Text('Try again'),
-                              elevation: 0)
-                        ],
-                      ),
-                    )
-                  : Column(
+        child: (loading)
+            ? Center(child: CircularProgressIndicator())
+            : (data['error'] != null)
+                ? Center(
+                    child: Column(
                       mainAxisSize: MainAxisSize.max,
                       children: <Widget>[
-                        // Filter Section
-                        Expanded(
-                          flex: 6,
-                          child: Container(
-                            padding: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                gradient: LinearGradient(colors: [
-                                  Colors.lightGreenAccent,
-                                  Colors.lightBlueAccent
-                                ])),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Center(
-                                    child: Text('Filters',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline5)),
-                                Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: <Widget>[
-                                    Text('Districts : '),
-                                    Container(
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 6),
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          color: Colors.grey.withOpacity(0.5)),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton(
-                                          dropdownColor: Colors.white,
-                                          value: filter.district,
-                                          isDense: true,
-                                          onChanged: (String district) =>
-                                              setState(() =>
-                                                  filter.district = district),
-                                          items: CaseFilter.districts
-                                              .map((String district) =>
-                                                  DropdownMenuItem(
-                                                    value: district,
-                                                    child: Text(
-                                                      district,
-                                                      maxLines: 2,
-                                                      style: TextStyle(
-                                                          fontSize: 14),
-                                                    ),
-                                                  ))
-                                              .toList(),
-                                        ),
+                        Text(data['errorMsg']),
+                        RaisedButton(
+                            onPressed: updateData,
+                            child: Text('Try again'),
+                            elevation: 0)
+                      ],
+                    ),
+                  )
+                : Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: <Widget>[
+                      // Filter Section
+                      reloading
+                          ? LinearProgressIndicator(
+                              backgroundColor: Colors.transparent)
+                          : Container(height: 6),
+                      Expanded(
+                        flex: 6,
+                        child: Container(
+                          margin: EdgeInsets.fromLTRB(8, 0, 8, 0),
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              gradient: LinearGradient(colors: [
+                                Colors.lightGreenAccent,
+                                Colors.lightBlueAccent
+                              ])),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Center(
+                                  child: Text('Filters',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headline5)),
+                              Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: <Widget>[
+                                  Text('Districts : '),
+                                  Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 6),
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        color: Colors.grey.withOpacity(0.5)),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton(
+                                        dropdownColor: Colors.white,
+                                        value: filter.district,
+                                        isDense: true,
+                                        onChanged: (String district) =>
+                                            setState(() =>
+                                                filter.district = district),
+                                        items: CaseFilter.districts
+                                            .map((String district) =>
+                                                DropdownMenuItem(
+                                                  value: district,
+                                                  child: Text(
+                                                    district,
+                                                    maxLines: 2,
+                                                    style:
+                                                        TextStyle(fontSize: 14),
+                                                  ),
+                                                ))
+                                            .toList(),
                                       ),
-                                    )
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: <Widget>[
-                                    Text('Case Types : '),
-                                    Container(
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 6),
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          color: Colors.grey.withOpacity(0.5)),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton(
-                                          dropdownColor: Colors.white,
-                                          value: filter.caseClassification,
-                                          isDense: true,
-                                          onChanged: (String classification) =>
-                                              setState(() =>
-                                                  filter.caseClassification =
-                                                      classification),
-                                          items: CaseFilter.caseTypes
-                                              .map((String caseType) =>
-                                                  DropdownMenuItem(
-                                                    value: caseType,
-                                                    child: Text(
-                                                      caseType,
-                                                      maxLines: 2,
-                                                      style: TextStyle(
-                                                          fontSize: 14),
-                                                    ),
-                                                  ))
-                                              .toList(),
-                                        ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: <Widget>[
+                                  Text('Case Types : '),
+                                  Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 6),
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        color: Colors.grey.withOpacity(0.5)),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton(
+                                        dropdownColor: Colors.white,
+                                        value: filter.caseClassification,
+                                        isDense: true,
+                                        onChanged: (String classification) =>
+                                            setState(() =>
+                                                filter.caseClassification =
+                                                    classification),
+                                        items: CaseFilter.caseTypes
+                                            .map((String caseType) =>
+                                                DropdownMenuItem(
+                                                  value: caseType,
+                                                  child: Text(
+                                                    caseType,
+                                                    maxLines: 2,
+                                                    style:
+                                                        TextStyle(fontSize: 14),
+                                                  ),
+                                                ))
+                                            .toList(),
                                       ),
-                                    )
-                                  ],
-                                ),
-                                Row(
-                                  children: <Widget>[
-                                    Text('Last 14 days only'),
-                                    SizedBox(
-                                      height: 40,
-                                      child: Checkbox(
-                                          value: filter.fourTeenDaysAgo,
-                                          onChanged: (bool val) => setState(
-                                              () => filter.fourTeenDaysAgo =
-                                                  val)),
-                                    )
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                  child: TextField(
-                                    controller: _searchController,
-                                    maxLines: 1,
-                                    decoration: InputDecoration(
-                                        hintText: 'Search', isDense: true),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Text('Past 14 days only'),
+                                  Container(
+                                    height: 10,
+                                    child: Checkbox(
+                                        value: filter.fourTeenDaysAgo,
+                                        onChanged: (bool val) => setState(() =>
+                                            filter.fourTeenDaysAgo = val)),
                                   ),
+                                ],
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: Colors.grey.withOpacity(0.5)),
+                                padding: EdgeInsets.symmetric(horizontal: 6),
+                                // height: 20,
+                                child: TextField(
+                                  controller: _searchController,
+                                  maxLines: 1,
+                                  decoration: InputDecoration(
+                                      contentPadding:
+                                          EdgeInsets.symmetric(vertical: 5),
+                                      icon: Icon(Icons.search),
+                                      border: InputBorder.none,
+                                      hintText: 'Search',
+                                      isDense: true),
                                 ),
-                                // Spacer(),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: <Widget>[
-                                    Text(cases.length.toString() + ' items'),
-                                    SizedBox(width: 10),
-                                    GestureDetector(
-                                      onTap: () => setState(() {
-                                        _searchController.text = '';
-                                        filter.resetFilter();
-                                        cases = filter.getCases();
-                                      }),
-                                      child: Icon(Icons.clear),
-                                    ),
-                                    SizedBox(width: 10),
-                                    GestureDetector(
-                                      onTap: () => setState(() {
-                                        filter.textSearch =
-                                            _searchController.text;
-                                        cases = filter.getCases();
-                                      }),
-                                      child: Icon(Icons.search),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                              ),
+                              // Spacer(),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisSize: MainAxisSize.max,
+                                children: <Widget>[
+                                  Text(cases.length.toString() + ' items'),
+                                  SizedBox(width: 10),
+                                  GestureDetector(
+                                    onTap: () => setState(() {
+                                      _searchController.text = '';
+                                      filter.resetFilter();
+                                      cases = filter.getCases();
+                                    }),
+                                    child: Icon(Icons.clear),
+                                  ),
+                                  SizedBox(width: 10),
+                                  GestureDetector(
+                                    onTap: () => setState(() {
+                                      filter.textSearch =
+                                          _searchController.text;
+                                      cases = filter.getCases();
+                                    }),
+                                    child: Icon(Icons.search),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
-                        Row(
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: List.generate(values.length, (i) => i)
                                 .map((int idx) {
@@ -323,32 +353,11 @@ class _CasesInfoState extends State<CasesInfo> {
                                 ),
                               );
                             }).toList()),
-
-                        // Expanded(
-                        //   flex: 12,
-                        //   child: Scrollbar(
-                        //     child: SingleChildScrollView(
-                        //       child: DataTable(
-                        //           columnSpacing: 10,
-                        //           columns:
-                        //               values.map<DataColumn>((Function func) {
-                        //             return DataColumn(
-                        //                 numeric: func == CaseParse.age ||
-                        //                     func == CaseParse.caseNum,
-                        //                 label: Text(func(null, true)));
-                        //           }).toList(),
-                        //           rows: cases.map<DataRow>((Case cAse) {
-                        //             return DataRow(
-                        //                 cells: values
-                        //                     .map<DataCell>((Function func) {
-                        //               return DataCell(Text(func(cAse)));
-                        //             }).toList());
-                        //           }).toList()),
-                        //     ),
-                        //   ),
-                        // ),
-                        Expanded(
-                          flex: 12,
+                      ),
+                      Expanded(
+                        flex: 12,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8),
                           child: Stack(
                             children: <Widget>[
                               Scrollbar(
@@ -394,7 +403,7 @@ class _CasesInfoState extends State<CasesInfo> {
                                                       Text(
                                                           'Report Date: ${DateFormat('yyyy-MM-dd').format(cases[i].reportDate)}'),
                                                       Text(
-                                                          'Districts: ${cases[i].district}'),
+                                                          'Districts: ${cases[i].districts.join(', ')}'),
                                                       Text(
                                                           'Building: ${cases[i].building}'),
                                                       Text(
@@ -483,9 +492,9 @@ class _CasesInfoState extends State<CasesInfo> {
                             ],
                           ),
                         ),
-                      ],
-                    ),
-        ),
+                      ),
+                    ],
+                  ),
       ),
     );
   }
