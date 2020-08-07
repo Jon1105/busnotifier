@@ -129,7 +129,7 @@ class _CasesInfoState extends State<CasesInfo> {
                       reloading
                           ? LinearProgressIndicator(
                               backgroundColor: Colors.transparent)
-                          : Container(height: 6),
+                          : Container(height: 4),
                       Expanded(
                         flex: 6,
                         child: Container(
@@ -291,11 +291,17 @@ class _CasesInfoState extends State<CasesInfo> {
                               values.forEach((val) {
                                 if (val == CaseParse.buildings)
                                   total += 4;
+                                // else if (val == CaseParse.age ||
+                                //     val == CaseParse.caseNum)
+                                //   total += 1;
                                 else
                                   total += 2;
                               });
                               if (values[idx] == CaseParse.buildings)
                                 flex = 4;
+                              // else if (values[idx] == CaseParse.age ||
+                              //     values[idx] == CaseParse.caseNum)
+                              //   flex = 1;
                               else
                                 flex = 2;
                               double width =
@@ -364,107 +370,97 @@ class _CasesInfoState extends State<CasesInfo> {
                               Scrollbar(
                                 isAlwaysShown: true,
                                 controller: _scrollController,
-                                child: ListView.separated(
+                                child: ListView.builder(
                                     controller: _scrollController,
-                                    // itemExtent:
-                                    //     values.contains(CaseParse.buildings)
-                                    //         ? 60
-                                    //         : 50,
+                                    itemExtent:
+                                        values.contains(CaseParse.buildings)
+                                            ? 60
+                                            : 50,
                                     reverse: !filter.ascending,
                                     itemCount: cases.length,
-                                    separatorBuilder: (_, __) => Divider(),
                                     itemBuilder: (BuildContext context, int i) {
-                                      return Column(
-                                        children: <Widget>[
-                                          SizedBox(
-                                            // height: 20,
-                                            child: GestureDetector(
-                                              onTap: () => showBottomSheet(
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) =>
-                                                        Container(
-                                                  padding: EdgeInsets.all(10),
-                                                  color: Colors.brown,
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: <Widget>[
-                                                      Center(
-                                                        child: Text(
-                                                          'Case ${cases[i].caseNum}',
-                                                          style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500),
-                                                        ),
-                                                      ),
-                                                      Text(
-                                                          'Report Date: ${CaseParse.reportDate(cases[i])}'),
-                                                      Text(
-                                                          'Districts: ${CaseParse.districts(cases[i])}'),
-                                                      Text(
-                                                          'Building: ${CaseParse.buildings(cases[i])}'),
-                                                      Text(
-                                                          'Age: ${CaseParse.age(cases[i])}'),
-                                                      Text(
-                                                          'Gender: ${CaseParse.male(cases[i])}'),
-                                                      Text(
-                                                          'Onset Date: ${CaseParse.onset(cases[i])}'),
-                                                      Text(
-                                                          'Classification: ${CaseParse.classification(cases[i])}'),
-                                                      Text(
-                                                          'Residency: ${CaseParse.hkResident(cases[i])}'),
-                                                      Text(
-                                                          'Last Date of Residence: ${CaseParse.lastDatesOfResidence(cases[i])}'),
-                                                    ],
+                                      return SizedBox(
+                                        height:
+                                            values.contains(CaseParse.buildings)
+                                                ? 60
+                                                : 50,
+                                        child: InkWell(
+                                          onTap: () => showBottomSheet(
+                                            context: context,
+                                            builder: (BuildContext context) =>
+                                                Container(
+                                              padding: EdgeInsets.all(10),
+                                              color: Colors.brown,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: <Widget>[
+                                                  Center(
+                                                    child: Text(
+                                                      'Case ${cases[i].caseNum}',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500),
+                                                    ),
                                                   ),
-                                                ),
-                                              ),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceAround,
-                                                children:
-                                                    values.map((Function func) {
-                                                  int flex;
-                                                  if (func ==
-                                                      CaseParse.buildings)
-                                                    flex = 4;
-                                                  // else if (func == CaseParse.age ||
-                                                  //     func == CaseParse.caseNum)
-                                                  //   flex = 1;
-                                                  else
-                                                    flex = 2;
-                                                  var data = func(cases[i]);
-                                                  return Expanded(
-                                                      flex: flex,
-                                                      child: Text(
-                                                        data,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        maxLines: 2,
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w200),
-                                                        textAlign:
-                                                            (int.tryParse(
-                                                                        data) !=
-                                                                    null)
-                                                                ? TextAlign
-                                                                    .center
-                                                                : null,
-                                                      ));
-                                                }).toList(),
+                                                  Text(
+                                                      'Report Date: ${CaseParse.reportDate(cases[i])}'),
+                                                  Text(
+                                                      'Districts: ${CaseParse.districts(cases[i])}'),
+                                                  Text(
+                                                      'Building: ${CaseParse.buildings(cases[i])}'),
+                                                  Text(
+                                                      'Age: ${CaseParse.age(cases[i])}'),
+                                                  Text(
+                                                      'Gender: ${CaseParse.male(cases[i])}'),
+                                                  Text(
+                                                      'Onset Date: ${CaseParse.onset(cases[i])}'),
+                                                  Text(
+                                                      'Classification: ${CaseParse.classification(cases[i])}'),
+                                                  Text(
+                                                      'Residency: ${CaseParse.hkResident(cases[i])}'),
+                                                  Text(
+                                                      'Last Date of Residence: ${CaseParse.lastDatesOfResidence(cases[i])}'),
+                                                ],
                                               ),
                                             ),
                                           ),
-                                          // Divider()
-                                        ],
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                            children:
+                                                values.map((Function func) {
+                                              int flex;
+                                              if (func == CaseParse.buildings)
+                                                flex = 4;
+                                              // else if (func == CaseParse.age ||
+                                              //     func == CaseParse.caseNum)
+                                              //   flex = 1;
+                                              else
+                                                flex = 2;
+                                              var data = func(cases[i]);
+                                              return Expanded(
+                                                  flex: flex,
+                                                  child: Text(
+                                                    data,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 2,
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w200),
+                                                    textAlign: (func ==
+                                                                CaseParse.age ||
+                                                            func ==
+                                                                CaseParse
+                                                                    .caseNum)
+                                                        ? TextAlign.center
+                                                        : null,
+                                                  ));
+                                            }).toList(),
+                                          ),
+                                        ),
                                       );
                                     }),
                               ),

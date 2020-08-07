@@ -7,16 +7,21 @@ class StopsSearch extends SearchDelegate<Stop> {
 
   @override
   List<Widget> buildActions(BuildContext context) {
-    return [IconButton(icon: Icon(Icons.clear), onPressed: () => query = '')];
+    return [
+      IconButton(
+          icon: Icon(Icons.clear),
+          onPressed: () => (query == '') ? close(context, null) : query = '')
+    ];
   }
 
   @override
   Widget buildLeading(BuildContext context) {
-    return IconButton(icon: Icon(Icons.arrow_back), onPressed: () => close(context, null));
+    return IconButton(
+        icon: Icon(Icons.arrow_back), onPressed: () => close(context, null));
   }
 
   @override
-  Widget buildResults(BuildContext context) => Container();
+  Widget buildResults(_) => null;
 
   @override
   Widget buildSuggestions(BuildContext context) {

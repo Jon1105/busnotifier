@@ -90,32 +90,6 @@ Future<Map<String, dynamic>> hkMoreData() async {
             lastDatesOfResidence:
                 (lastDateOfResidence == null) ? [] : [lastDateOfResidence]);
         cases.add(cAse);
-
-        increment('total', cAse);
-        if (cAse.hkResident) {
-          increment('hkResident', cAse);
-        } else {
-          increment('nonHkResident', cAse);
-        }
-
-        if (cAse.male) {
-          increment('male', cAse);
-        } else {
-          increment('female', cAse);
-        }
-
-        if (cAse.classification == 'Imported case' ||
-            cAse.classification ==
-                'Epidemiologically linked with imported case') {
-          increment('imported', cAse);
-        } else if (cAse.classification == 'Local case' ||
-            cAse.classification == 'Epidemiologically linked with local case' ||
-            cAse.classification == 'Possibly local case' ||
-            cAse.classification ==
-                'Epidemiologically linked with possibly local case') {
-          increment('local', cAse);
-        } else
-          throw UnimplementedError();
       }
     } on FormatException catch (_) {
       // building['Related probable/confirmed cases] == 'string'
@@ -136,7 +110,33 @@ Future<Map<String, dynamic>> hkMoreData() async {
         cases[i].lastDatesOfResidence.addAll(cases[i - 1].lastDatesOfResidence);
       }
       cases.removeAt(i - 1);
+      continue;
     }
+    increment('total', cases[i]);
+    if (cases[i].hkResident) {
+      increment('hkResident', cases[i]);
+    } else {
+      increment('nonHkResident', cases[i]);
+    }
+
+    if (cases[i].male) {
+      increment('male', cases[i]);
+    } else {
+      increment('female', cases[i]);
+    }
+
+    if (cases[i].classification == 'Imported case' ||
+        cases[i].classification ==
+            'Epidemiologically linked with imported case') {
+      increment('imported', cases[i]);
+    } else if (cases[i].classification == 'Local case' ||
+        cases[i].classification == 'Epidemiologically linked with local case' ||
+        cases[i].classification == 'Possibly local case' ||
+        cases[i].classification ==
+            'Epidemiologically linked with possibly local case') {
+      increment('local', cases[i]);
+    } else
+      throw UnimplementedError();
   }
   count['All']['total'] = cases.length;
 

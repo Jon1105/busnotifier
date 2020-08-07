@@ -36,37 +36,52 @@ class CaseFilter {
 
     // Search
 
-    // if (textSearch != null) {
-    //   nCases = nCases.where((Case cAse) {
-    //     return (
-                // cAse.district
-                //       .toLowerCase()
-                //       .contains(this.textSearch.trim().toLowerCase()) ||
-    //             cAse.buildings
-    //                     .toLowerCase()
-    //                     .contains(this.textSearch.trim().toLowerCase()) ||
-    //                 cAse.caseNum
-    //                     .toString()
-    //                     .contains(this.textSearch.trim().toLowerCase()) ||
-    //                 this
-    //                     .textSearch
-    //                     .trim()
-    //                     .toLowerCase()
-    //                     .contains(cAse.caseNum.toString()) ||
-    //                 this
-    //                     .textSearch
-    //                     .trim()
-    //                     .toLowerCase()
-    //                     .contains(cAse.buildings.toLowerCase())
-            //     ||
-            // this
-            //     .textSearch
-            //     .trim()
-            //     .toLowerCase()
-            //     .contains(cAse.district.toLowerCase())
-    //         );
-    //   }).toList();
-    // }
+    if (textSearch != null) {
+      nCases = nCases.where((Case cAse) {
+        bool districts = false;
+        bool buildings = false;
+
+        for (String building in cAse.buildings) {
+          if (building
+                  .toLowerCase()
+                  .trim()
+                  .contains(textSearch.trim().toLowerCase()) ||
+              this
+                  .textSearch
+                  .trim()
+                  .toLowerCase()
+                  .contains(building.trim().toLowerCase())) {
+            buildings = true;
+            break;
+          }
+        }
+
+        for (String district in cAse.districts) {
+          if (district
+                  .toLowerCase()
+                  .trim()
+                  .contains(textSearch.trim().toLowerCase()) ||
+              this
+                  .textSearch
+                  .trim()
+                  .toLowerCase()
+                  .contains(district.trim().toLowerCase())) {
+            districts = true;
+            break;
+          }
+        }
+
+        bool caseNums = cAse.caseNum
+                .toString()
+                .contains(this.textSearch.trim().toLowerCase()) ||
+            this
+                .textSearch
+                .trim()
+                .toLowerCase()
+                .contains(cAse.caseNum.toString());
+        return districts || buildings || caseNums;
+      }).toList();
+    }
 
     if (this.fourTeenDaysAgo) {
       DateTime now = DateTime.now();

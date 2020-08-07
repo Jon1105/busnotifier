@@ -150,8 +150,9 @@ class _CovidTrackerState extends State<CovidTracker> {
                 : Column(
                     children: <Widget>[
                       reloading
-                          ? LinearProgressIndicator()
-                          : Container(height: 6),
+                          ? LinearProgressIndicator(
+                              backgroundColor: Colors.transparent)
+                          : Container(height: 4),
                       CovidChart(data, country, boxDeco),
                       Container(
                           margin: margin,
