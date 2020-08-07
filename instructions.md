@@ -1,6 +1,6 @@
 # Todo
 - [ ]  ***iOS***
-- [ ] Add daily notification for hk cases
+- [ ] ?? Add daily notification for hk cases
 - [ ] Use google maps api
 - [ ] [gov](https://data.gov.hk/en-data/dataset/hk-dh-chpsebcddr-novel-infectious-agent) api to show location of cases
 - [ ] Bug: Fix deaths scale
@@ -8,10 +8,14 @@
 - [ ] Create interchangeable themes
 - [ ] Preserve current country when switching between pages in PageView
 - [ ] Check if data is corect in HK cases info
-- [ ] Complete filter functionality for cases info (dates / days ago, ...) : Choose which districts, Link cases, Remove Case Range slider
+- [ ] fix Search function in filter.dart
+- [ ] Complete filter functionality for cases info (dates / days ago, ...) : 
+  - [x] Choose which districts, 
+  - [ ] Link cases, 
+  - [x] Remove Case Range slider
 - [ ]  ?? Add an *all countries* dashboard
 - [ ]  App Icon
-- [ ]  Use [DataTable](https://www.youtube.com/watch?v=ktTajqbhIcY&vl=en) with Single Child Scroll View
+- [ ]  Use [DataTable](https://www.youtube.com/watch?v=ktTajqbhIcY&vl=en) for Bottom Sheet
 - [ ]  Make list of stops editable when choosing which to add
 - [ ]  ?? Be able to edit stops
 - [ ]  Optimize data loading (sorting, ...) which causes frames to jump when loading more info for hk

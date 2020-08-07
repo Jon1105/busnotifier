@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:hkinfo/CovidHKApp/filter.dart';
 import 'package:http/http.dart' as http;
 import 'package:hkinfo/CovidHKApp/case.dart';
 import 'package:intl/intl.dart';
@@ -26,87 +27,122 @@ Future<Map<String, dynamic>> hkMoreData() async {
     return {'errorMsg': 'Something went wrong', 'error': error};
   }
 
-  // Decoding logic
-
-  // List<Map<String, dynamic>> details = json.decode(detailsResponse.body);
-  // List<Map<String, dynamic>> buildings = json.decode(buildingsResponse.body);
   List details = json.decode(detailsResponse.body);
   List buildings = json.decode(buildingsResponse.body);
 
   // Because details[3272]['Case no.'] == '2978'
-  details.sort(
-      (a, b) => int.parse(a['Case no.']).compareTo(int.parse(b['Case no.'])));
+  // details.sort(
+  //     (a, b) => int.parse(a['Case no.']).compareTo(int.parse(b['Case no.'])));
+  Map<String, Map> count = {};
+  List<String> listOfDistricts = CaseFilter.districts;
+  for (int i = 0; i < listOfDistricts.length; i++) {
+    {
+      count[listOfDistricts[i]] = {
+        'total': 0,
+        'hkResident': 0,
+        'nonHkResident': 0,
+        'male': 0,
+        'female': 0,
+        'imported': 0,
+        'local': 0,
+      };
+      count[listOfDistricts[i]]['districtNum'] = i;
+    }
+  }
 
-  // for each case registered in the buildings data
-  List<Map<String, dynamic>> caseNums = [];
+  void increment(String field, Case cAse) {
+    count['All'][field] += 1;
+    cAse.districts.forEach((String district) {
+      count[district][field] += 1;
+    });
+  }
+
+  List<Case> cases = [];
   for (Map<String, dynamic> building in buildings) {
     try {
-      for (int cAse in building['Related probable/confirmed cases']
+      for (int caseS in building['Related probable/confirmed cases']
           .split(',')
           .map(int.parse)
           .toList()) {
-        caseNums.add({'num': cAse, 'buildingDetail': building});
+        Map<String, dynamic> caseDetail = details[caseS - 1];
+        Map<String, dynamic> buildingDetail = building;
+        assert(int.parse(caseDetail['Case no.']) == caseS);
+        List<String> districts = [buildingDetail['District']];
+        DateTime lastDateOfResidence;
+        if (buildingDetail['Last date of residence of the case(s)'] != '') {
+          lastDateOfResidence = DateFormat('d/M/yy')
+              .parse(buildingDetail['Last date of residence of the case(s)']);
+        }
+
+        var date = getDate(caseDetail['Date of onset']);
+        String status = getStatus(date);
+        Case cAse = Case(
+            caseNum: caseS,
+            reportDate: DateFormat('d/M/yy').parse(caseDetail['Report date']),
+            districts: districts,
+            buildings: [buildingDetail['Building name']],
+            age: caseDetail['Age'],
+            male: caseDetail['Gender'] == 'M',
+            onsetStatus: status,
+            onsetDate: (status == 'Known') ? date : null,
+            classification: caseDetail['Case classification*'],
+            hkResident: caseDetail['HK/Non-HK resident'] == 'HK resident',
+            lastDatesOfResidence:
+                (lastDateOfResidence == null) ? [] : [lastDateOfResidence]);
+        cases.add(cAse);
+
+        increment('total', cAse);
+        if (cAse.hkResident) {
+          increment('hkResident', cAse);
+        } else {
+          increment('nonHkResident', cAse);
+        }
+
+        if (cAse.male) {
+          increment('male', cAse);
+        } else {
+          increment('female', cAse);
+        }
+
+        if (cAse.classification == 'Imported case' ||
+            cAse.classification ==
+                'Epidemiologically linked with imported case') {
+          increment('imported', cAse);
+        } else if (cAse.classification == 'Local case' ||
+            cAse.classification == 'Epidemiologically linked with local case' ||
+            cAse.classification == 'Possibly local case' ||
+            cAse.classification ==
+                'Epidemiologically linked with possibly local case') {
+          increment('local', cAse);
+        } else
+          throw UnimplementedError();
       }
     } on FormatException catch (_) {
+      // building['Related probable/confirmed cases] == 'string'
       continue;
     }
   }
-
-  // caseNums.sort((Map case1, Map case2) => case1['num'].compareTo(case2['num']));
-
-  // List<Case> cases = List.generate(caseNums.length, (index) => null);
-  List<Case> cases = [];
-  int i = 0;
-  for (Map<String, dynamic> caseMap in caseNums) {
-    // for (int i = 0; i < caseNums.length; i++) {
-    if (caseNums[i]['num'] == null) {
-      continue;
-    }
-    Map<String, dynamic> caseDetail = details[caseMap['num'] - 1];
-    Map<String, dynamic> buildingDetail = caseMap['buildingDetail'];
-    assert(int.parse(caseDetail['Case no.']) == caseMap['num']);
-    int caseNum = int.parse(caseDetail['Case no.']);
-    List<String> districts = [buildingDetail['District']];
-    DateTime lastDateOfResidence;
-    if (buildingDetail['Last date of residence of the case(s)'] != '') {
-      lastDateOfResidence = DateFormat('d/M/yy')
-          .parse(buildingDetail['Last date of residence of the case(s)']);
-    }
-
-    // if (i != 0) {
-    //   if (caseNum == cases.last.caseNum) {
-    //     districts.addAll(cases.last.districts);
-    //     cases.removeLast();
-    //   }
-    // }
-
-    var date = getDate(caseDetail['Date of onset']);
-    String status = getStatus(date);
-    cases.add(
-      Case(
-          caseNum: caseNum,
-          reportDate: DateFormat('d/M/yy').parse(caseDetail['Report date']),
-          districts: districts,
-          building: buildingDetail['Building name'],
-          age: caseDetail['Age'],
-          male: caseDetail['Gender'] == 'M',
-          onsetStatus: status,
-          onsetDate: (status == 'Known') ? date : null,
-          classification: caseDetail['Case classification*'],
-          hkResident: caseDetail['HK/Non-HK resident'] == 'HK resident',
-          lastDateofResidence: lastDateOfResidence),
-    );
-    i++;
-  }
-
-  // bruteForce
   cases.sort((Case a, Case b) => a.caseNum.compareTo(b.caseNum));
-  return {'cases': cases, 'error': null};
+  // // [i] initialized at 1 to skip first case
+  for (int i = 1; i < cases.length; i++) {
+    if (cases[i].caseNum == cases[i - 1].caseNum) {
+      if (cases[i].buildings != cases[i - 1].buildings) {
+        cases[i].buildings.addAll(cases[i - 1].buildings);
+      }
+      if (cases[i].districts != cases[i - 1].districts) {
+        cases[i].districts.addAll(cases[i - 1].districts);
+      }
+      if (cases[i].lastDatesOfResidence != cases[i - 1].lastDatesOfResidence) {
+        cases[i].lastDatesOfResidence.addAll(cases[i - 1].lastDatesOfResidence);
+      }
+      cases.removeAt(i - 1);
+    }
+  }
+  count['All']['total'] = cases.length;
 
-// return {'error': Error};
+  // !!! Add each district here and total in 'count'
+  return {'cases': cases, 'error': null, 'count': count};
 }
-
-//
 
 String getStatus(dynamic value) {
   if (value.runtimeType == DateTime) {
@@ -126,10 +162,3 @@ dynamic getDate(String value) {
       return 'Unknown';
   }
 }
-
-// main(List<String> args) async {
-//   print('Start');
-//   Map val = await dataGetter();
-//   print('Done');
-//   print(val['cases'].last);
-// }

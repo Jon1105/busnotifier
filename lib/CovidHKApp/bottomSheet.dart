@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:hkinfo/CovidHKApp/case.dart';
 import 'package:hkinfo/CovidApp/parser.dart';
-import 'package:hkinfo/CovidHKApp/filter.dart';
 
 class DistrictCasesBottomSheet extends StatefulWidget {
-  final Map<String, dynamic> data;
-  DistrictCasesBottomSheet(this.data);
+  final Map<String, Map> districtData;
+  DistrictCasesBottomSheet(this.districtData);
 
   @override
   _DistrictCasesBottomSheetState createState() =>
@@ -13,101 +11,29 @@ class DistrictCasesBottomSheet extends StatefulWidget {
 }
 
 class _DistrictCasesBottomSheetState extends State<DistrictCasesBottomSheet> {
-  Map<String, Map<String, int>> districtData;
-  // ! Can be ['title', 'total', 'hkResident', 'nonHkResident', 'male', 'female', 'imported', 'importedLinked', 'local', 'localLinked', 'possiblyLocal', 'possiblyLocalLinked']
-  static const List<String> possibilities = [
-    'total',
-    'hkResident',
-    'nonHkResident',
-    'male',
-    'female',
-    'imported',
-    'importedLinked',
-    'local',
-    'localLinked',
-    // 'possiblyLocal',
-    // 'possiblyLocalLinked'
-  ];
-  // List<DropdownMenuItem> possibilityItems = ;
   Map<int, String> districtValues = {0: 'title', 1: 'total', 2: 'local'};
-
-  Map<String, Map<String, int>> getTotalDataByDistrict() {
-    Map<String, Map<String, int>> map = {'Total': Map()};
-    void incrementFieldAndTotal(String field, Case cAse) {
-      for (String district in cAse.districts) {
-        try {
-          map[district][field] += 1;
-        } catch (_) {
-          map[district][field] = 1;
-        }
-      }
-      try {
-        map['Total'][field] += 1;
-      } catch (_) {
-        map['Total'][field] = 1;
-      }
-    }
-
-    for (Case cAse in widget.data['cases']) {
-      if (!map.containsKey(cAse.district)) map[cAse.district] = Map();
-      incrementFieldAndTotal('total', cAse);
-      if (cAse.hkResident)
-        incrementFieldAndTotal('hkResident', cAse);
-      else
-        incrementFieldAndTotal('nonHkResident', cAse);
-
-      if (cAse.male)
-        incrementFieldAndTotal('male', cAse);
-      else
-        incrementFieldAndTotal('female', cAse);
-
-      if (cAse.classification == 'Imported case')
-        incrementFieldAndTotal('imported', cAse);
-      else if (cAse.classification ==
-          'Epidemiologically linked with imported case')
-        incrementFieldAndTotal('importedLinked', cAse);
-      else if (cAse.classification == 'Local case')
-        incrementFieldAndTotal('local', cAse);
-      else if (cAse.classification ==
-          'Epidemiologically linked with local case')
-        incrementFieldAndTotal('localLinked', cAse);
-      else if (cAse.classification == 'Possibly local case')
-        incrementFieldAndTotal('possiblyLocal', cAse);
-      else if (cAse.classification ==
-          'Epidemiologically linked with possibly local case')
-        incrementFieldAndTotal('possiblyLocalLinked', cAse);
-      else
-        throw Exception('Case classification not accounted for');
-    }
-    // set num
-
-    for (String district in map.keys) {
-      map[district]['districtNum'] = CaseFilter.districts.indexOf(district);
-    }
-
-    return map;
-  }
 
   @override
   void initState() {
     super.initState();
-    districtData = getTotalDataByDistrict();
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        // height: MediaQuery.of(context).size.height * 0.63,
         margin: EdgeInsets.all(10),
-        width: double.infinity,
-        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10)
-            .copyWith(bottom: 5),
+        padding:
+            EdgeInsets.symmetric(vertical: 5, horizontal: 10).copyWith(top: 0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           color: Colors.grey,
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.max,
           children: <Widget>[
+            FlatButton(
+                onPressed: Navigator.of(context).pop,
+                child: Icon(Icons.keyboard_arrow_down)),
             Expanded(
               child: Image(image: AssetImage('assets/HK-districts.png')),
             ),
@@ -135,9 +61,12 @@ class _DistrictCasesBottomSheetState extends State<DistrictCasesBottomSheet> {
                                             isDense: true,
                                             isExpanded: false,
                                             value: districtValues[i],
-                                            items:
-                                                possibilities.map((String key) {
-                                              return DropdownMenuItem(
+                                            items: widget
+                                                .districtData['Southern'].keys
+                                                .map<DropdownMenuItem<String>>(
+                                                    (key) {
+                                              assert(key.runtimeType == String);
+                                              return DropdownMenuItem<String>(
                                                   child: ConstrainedBox(
                                                     constraints: BoxConstraints(
                                                         maxWidth: 56),
@@ -163,16 +92,16 @@ class _DistrictCasesBottomSheetState extends State<DistrictCasesBottomSheet> {
                                         ),
                                       )
                               ] +
-                              districtData.keys.map((String district) {
+                              widget.districtData.keys.map((String district) {
                                 return (i != 0)
-                                    ? Text((districtData[district]
+                                    ? Text((widget.districtData[district]
                                                 [districtValues[i]] ??
                                             '0')
                                         .toString())
                                     : Text(
-                                        (district != 'Total')
+                                        (district != 'All')
                                             ? district +
-                                                ' (${districtData[district]['districtNum']})'
+                                                ' (${widget.districtData[district]['districtNum']})'
                                             : district,
                                         style: Theme.of(context)
                                             .textTheme

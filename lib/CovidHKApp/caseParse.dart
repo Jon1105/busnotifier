@@ -14,14 +14,14 @@ class CaseParse {
     return DateFormat('MM/dd/yy').format(cAse.reportDate);
   }
 
-  static String district([Case cAse, name = false]) {
+  static String districts([Case cAse, name = false]) {
     if (name) return 'Districts';
-    return cAse.district;
+    return cAse.districts.join(' | ');
   }
 
-  static String building([Case cAse, name = false]) {
+  static String buildings([Case cAse, name = false]) {
     if (name) return 'Building';
-    return cAse.building;
+    return cAse.buildings.join(' | ');
   }
 
   static String age([Case cAse, name = false]) {
@@ -42,11 +42,20 @@ class CaseParse {
       return cAse.onsetStatus;
   }
 
-  static String lastDateOfResidence([Case cAse, name = false]) {
+  static String lastDatesOfResidence([Case cAse, name = false]) {
     if (name) return 'Last Date of Residence';
-    return (cAse.lastDateofResidence == null)
-        ? '...'
-        : DateFormat('MM/dd/yy').format(cAse.lastDateofResidence);
+    if (cAse.lastDatesOfResidence != null)
+      return cAse.lastDatesOfResidence
+          .map((DateTime date) {
+            if (date == null) return null;
+            // else
+            //   return date.toString();
+            return DateFormat('MM/dd/yy').format(date);
+          })
+          .toList()
+          .join(' | ');
+    else
+      return '...';
   }
 
   static String classification([Case cAse, name = false]) {
@@ -58,19 +67,19 @@ class CaseParse {
 
   static String hkResident([Case cAse, name = false]) {
     if (name) return 'Residency';
-    return cAse.hkResident ? 'Resident' : 'Non-Resident';
+    return cAse.hkResident ? 'HK-Resident' : 'Non HK-Resident';
   }
 
   static List<Function> get possibilities {
     return [
       CaseParse.caseNum,
       CaseParse.reportDate,
-      CaseParse.district,
-      CaseParse.building,
+      CaseParse.districts,
+      CaseParse.buildings,
       CaseParse.age,
       CaseParse.male,
       CaseParse.onset,
-      CaseParse.lastDateOfResidence,
+      CaseParse.lastDatesOfResidence,
       CaseParse.classification,
       CaseParse.hkResident
     ];

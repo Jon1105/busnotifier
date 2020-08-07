@@ -20,13 +20,14 @@ class _CasesInfoState extends State<CasesInfo> {
   bool reloading = false;
   Map<String, dynamic> data;
   List<Case> cases;
-  // bool ascending = true;
+  // PersistentBottomSheetController _bottomSheetController;
+  // bool open = true;
   CaseFilter filter;
   ScrollController _scrollController = ScrollController();
   List<Function> values = [
     CaseParse.caseNum,
     CaseParse.reportDate,
-    CaseParse.district
+    CaseParse.districts
   ];
 
   TextEditingController _searchController = TextEditingController();
@@ -288,12 +289,12 @@ class _CasesInfoState extends State<CasesInfo> {
                               int flex;
                               int total = 0;
                               values.forEach((val) {
-                                if (val == CaseParse.building)
+                                if (val == CaseParse.buildings)
                                   total += 4;
                                 else
                                   total += 2;
                               });
-                              if (values[idx] == CaseParse.building)
+                              if (values[idx] == CaseParse.buildings)
                                 flex = 4;
                               else
                                 flex = 2;
@@ -363,14 +364,15 @@ class _CasesInfoState extends State<CasesInfo> {
                               Scrollbar(
                                 isAlwaysShown: true,
                                 controller: _scrollController,
-                                child: ListView.builder(
+                                child: ListView.separated(
                                     controller: _scrollController,
-                                    itemExtent:
-                                        values.contains(CaseParse.building)
-                                            ? 60
-                                            : 40,
+                                    // itemExtent:
+                                    //     values.contains(CaseParse.buildings)
+                                    //         ? 60
+                                    //         : 50,
                                     reverse: !filter.ascending,
                                     itemCount: cases.length,
+                                    separatorBuilder: (_, __) => Divider(),
                                     itemBuilder: (BuildContext context, int i) {
                                       return Column(
                                         children: <Widget>[
@@ -401,23 +403,23 @@ class _CasesInfoState extends State<CasesInfo> {
                                                         ),
                                                       ),
                                                       Text(
-                                                          'Report Date: ${DateFormat('yyyy-MM-dd').format(cases[i].reportDate)}'),
+                                                          'Report Date: ${CaseParse.reportDate(cases[i])}'),
                                                       Text(
-                                                          'Districts: ${cases[i].districts.join(', ')}'),
+                                                          'Districts: ${CaseParse.districts(cases[i])}'),
                                                       Text(
-                                                          'Building: ${cases[i].building}'),
+                                                          'Building: ${CaseParse.buildings(cases[i])}'),
                                                       Text(
-                                                          'Age: ${cases[i].age}'),
+                                                          'Age: ${CaseParse.age(cases[i])}'),
                                                       Text(
-                                                          'Gender: ${cases[i].male ? 'male' : 'female'}'),
+                                                          'Gender: ${CaseParse.male(cases[i])}'),
                                                       Text(
-                                                          'Onset Date: ${cases[i].onsetDate != null ? DateFormat('yyyy-MM-dd').format(cases[i].onsetDate) : cases[i].onsetStatus}'),
+                                                          'Onset Date: ${CaseParse.onset(cases[i])}'),
                                                       Text(
-                                                          'Classification: ${cases[i].classification}'),
+                                                          'Classification: ${CaseParse.classification(cases[i])}'),
                                                       Text(
-                                                          'Residency: ${cases[i].hkResident ? 'HK resident' : 'Non Resident'}'),
+                                                          'Residency: ${CaseParse.hkResident(cases[i])}'),
                                                       Text(
-                                                          'Last Date of Residence: ${cases[i].lastDateofResidence != null ? DateFormat('yyyy-MM-dd').format(cases[i].lastDateofResidence) : '...'}'),
+                                                          'Last Date of Residence: ${CaseParse.lastDatesOfResidence(cases[i])}'),
                                                     ],
                                                   ),
                                                 ),
@@ -430,7 +432,7 @@ class _CasesInfoState extends State<CasesInfo> {
                                                     values.map((Function func) {
                                                   int flex;
                                                   if (func ==
-                                                      CaseParse.building)
+                                                      CaseParse.buildings)
                                                     flex = 4;
                                                   // else if (func == CaseParse.age ||
                                                   //     func == CaseParse.caseNum)
@@ -461,7 +463,7 @@ class _CasesInfoState extends State<CasesInfo> {
                                               ),
                                             ),
                                           ),
-                                          Divider()
+                                          // Divider()
                                         ],
                                       );
                                     }),

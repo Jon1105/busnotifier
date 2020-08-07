@@ -36,34 +36,37 @@ class CaseFilter {
 
     // Search
 
-    if (textSearch != null) {
-      nCases = nCases.where((Case cAse) {
-        return (cAse.district
-                .toLowerCase()
-                .contains(this.textSearch.trim().toLowerCase()) ||
-            cAse.building
-                .toLowerCase()
-                .contains(this.textSearch.trim().toLowerCase()) ||
-            cAse.caseNum
-                .toString()
-                .contains(this.textSearch.trim().toLowerCase()) ||
-            this
-                .textSearch
-                .trim()
-                .toLowerCase()
-                .contains(cAse.caseNum.toString()) ||
-            this
-                .textSearch
-                .trim()
-                .toLowerCase()
-                .contains(cAse.building.toLowerCase()) ||
-            this
-                .textSearch
-                .trim()
-                .toLowerCase()
-                .contains(cAse.district.toLowerCase()));
-      }).toList();
-    }
+    // if (textSearch != null) {
+    //   nCases = nCases.where((Case cAse) {
+    //     return (
+                // cAse.district
+                //       .toLowerCase()
+                //       .contains(this.textSearch.trim().toLowerCase()) ||
+    //             cAse.buildings
+    //                     .toLowerCase()
+    //                     .contains(this.textSearch.trim().toLowerCase()) ||
+    //                 cAse.caseNum
+    //                     .toString()
+    //                     .contains(this.textSearch.trim().toLowerCase()) ||
+    //                 this
+    //                     .textSearch
+    //                     .trim()
+    //                     .toLowerCase()
+    //                     .contains(cAse.caseNum.toString()) ||
+    //                 this
+    //                     .textSearch
+    //                     .trim()
+    //                     .toLowerCase()
+    //                     .contains(cAse.buildings.toLowerCase())
+            //     ||
+            // this
+            //     .textSearch
+            //     .trim()
+            //     .toLowerCase()
+            //     .contains(cAse.district.toLowerCase())
+    //         );
+    //   }).toList();
+    // }
 
     if (this.fourTeenDaysAgo) {
       DateTime now = DateTime.now();
@@ -75,7 +78,9 @@ class CaseFilter {
     if (this.district != 'All' &&
         this.district != '' &&
         this.district != null) {
-      nCases = nCases.where((Case cAse) => cAse.district == district).toList();
+      nCases = nCases
+          .where((Case cAse) => cAse.districts.contains(district))
+          .toList();
     }
 
     if (this.caseClassification != 'All' &&
@@ -91,7 +96,6 @@ class CaseFilter {
   }
 
   void resetFilter() {
-    // this.range = RangeValues(this.min, this.max);
     this.district = 'All';
     this.fourTeenDaysAgo = false;
     this.textSearch = '';

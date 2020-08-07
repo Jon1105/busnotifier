@@ -120,7 +120,10 @@ class _CovidTrackerState extends State<CovidTracker> {
                   var cntry = await showSearch(
                       context: context, delegate: CountrySearch(countries));
                   if (cntry != null) {
-                    setState(() => country = cntry);
+                    setState(() {
+                      country = cntry;
+                      reloading = false;
+                    });
                     updateData(false);
                     _scaffoldKey.currentState.removeCurrentSnackBar(
                         reason: SnackBarClosedReason.dismiss);
