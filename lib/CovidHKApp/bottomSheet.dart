@@ -21,6 +21,7 @@ class _DistrictCasesBottomSheetState extends State<DistrictCasesBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: MediaQuery.of(context).size.width,
         margin: EdgeInsets.all(10),
         padding:
             EdgeInsets.symmetric(vertical: 5, horizontal: 10).copyWith(top: 0),
