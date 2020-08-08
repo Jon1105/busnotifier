@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:hkinfo/CovidHKApp/case.dart';
 
 class CaseFilter {

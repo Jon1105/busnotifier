@@ -4,7 +4,6 @@ import 'package:hkinfo/CovidHKApp/caseParse.dart';
 import 'package:hkinfo/CovidHKApp/bottomSheet.dart';
 import 'package:hkinfo/CovidHKApp/filter.dart';
 import 'package:hkinfo/CovidHKApp/case.dart';
-import 'package:intl/intl.dart';
 
 class CasesInfo extends StatefulWidget {
   final Country country;
