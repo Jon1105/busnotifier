@@ -1,26 +1,28 @@
 # Todo
+
 - [ ]  ***iOS***
 - [ ] ?? Add daily notification for hk cases
-- [ ] Use google maps api
 - [ ] [gov](https://data.gov.hk/en-data/dataset/hk-dh-chpsebcddr-novel-infectious-agent) api to show location of cases
 - [ ] Bug: Fix deaths scale
 - [ ] Change countries.dart to json file
 - [ ] Create interchangeable themes
 - [ ] Preserve current country when switching between pages in PageView
 - [ ] Check if data is corect in HK cases info
-- [ ] fix Search function in filter.dart
-- [ ]  ?? Add an *all countries* dashboard
-- [ ]  App Icon
-- [ ]  Make list of stops editable when choosing which to add
-- [ ]  ?? Be able to edit stops
+- [ ] ?? Add an *all countries* dashboard
+- [ ] Make list of stops editable when choosing which to add
+- [ ] ?? Be able to edit stops
+- [ ] Add more stops
 
 ##### Completed
 
-- [x]  ~~Use [DataTable](https://www.youtube.com/watch?v=ktTajqbhIcY&vl=en) for Bottom Sheet~~
+- [ ] ~~Use google maps api~~
+- [x] fix Search function in filter.dart
+- [x] App Icon
+- [ ]  ~~Use [DataTable](https://www.youtube.com/watch?v=ktTajqbhIcY&vl=en) for Bottom Sheet~~
 - [x]  Optimize data loading (sorting, ...) which causes frames to jump when loading more info for hk
-- [x] Complete filter functionality for cases info (dates / days ago, ...) : 
-  - [x] Choose which districts, 
-  - [x] Link cases, 
+- [x] Complete filter functionality for cases info (dates / days ago, ...) :
+  - [x] Choose which districts
+  - [x] Link cases
   - [x] Remove Case Range slider
 - [x]  Error: setState() called after dispose() - when screen is disposed of before page is done loading
 - [x] Add multiple stop functionality
