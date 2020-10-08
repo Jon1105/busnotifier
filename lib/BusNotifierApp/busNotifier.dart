@@ -43,9 +43,7 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
   }
 
   List<Map> remindersToMaps(List<Reminder> reminders) {
-    return reminders
-        .map((Reminder listReminder) => listReminder.toMap())
-        .toList();
+    return reminders.map((Reminder listReminder) => listReminder.toMap()).toList();
   }
 
   Future<void> writeReminder(Reminder reminder) async {
@@ -70,8 +68,7 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
     final file = await _remindersFile;
     reminders = await readReminders();
     try {
-      await flutterLocalNotificationsPlugin
-          .cancel(reminders.elementAt(index).notificationId);
+      await flutterLocalNotificationsPlugin.cancel(reminders.elementAt(index).notificationId);
     } catch (_) {
       print('No notification scheduled');
     }
@@ -93,8 +90,7 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
         // can tap outside to dismiss
         barrierDismissible: true,
         builder: (BuildContext context) => AlertDialog(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
               contentPadding: EdgeInsets.fromLTRB(8, 8, 8, 2),
               title: Text('Add a reminder'),
               content: StatefulBuilder(
@@ -115,8 +111,7 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                                       context: context,
                                       initialDate: now,
                                       firstDate: now,
-                                      lastDate:
-                                          now.add(Duration(days: 30 * 6)));
+                                      lastDate: now.add(Duration(days: 30 * 6)));
                                   if (result != null) {
                                     setState(() {
                                       dayPick = result;
@@ -126,8 +121,7 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                               ),
                               Text(
                                 DateFormat('EEEE dd').format(dayPick),
-                                style: TextStyle(
-                                    fontStyle: FontStyle.italic, fontSize: 14),
+                                style: TextStyle(fontStyle: FontStyle.italic, fontSize: 14),
                               ),
                             ],
                           ),
@@ -137,8 +131,8 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                                 elevation: 0,
                                 child: Text('Pick Time'),
                                 onPressed: () async {
-                                  var result = await showTimePicker(
-                                      context: context, initialTime: timePick);
+                                  var result =
+                                      await showTimePicker(context: context, initialTime: timePick);
                                   if (result != null) {
                                     setState(() {
                                       timePick = result;
@@ -147,9 +141,7 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                                 },
                               ),
                               Text('${timePick.hour}:${timePick.minute}',
-                                  style: TextStyle(
-                                      fontStyle: FontStyle.italic,
-                                      fontSize: 14))
+                                  style: TextStyle(fontStyle: FontStyle.italic, fontSize: 14))
                             ],
                           )
                         ],
@@ -162,8 +154,7 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                         elevation: 0,
                         onPressed: () async {
                           var result = await showSearch(
-                              context: context,
-                              delegate: StopsSearch(allStops.stops));
+                              context: context, delegate: StopsSearch(allStops.stops));
                           if (result != null) {
                             setState(() {
                               stops.add(result);
@@ -181,17 +172,14 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                                       (Stop stop) =>
                                           stop.route +
                                           ' ' +
-                                          ((stop.inbound)
-                                              ? 'Inbound'
-                                              : 'Outbound') +
+                                          ((stop.inbound) ? 'Inbound' : 'Outbound') +
                                           ': ' +
                                           stop.name,
                                     )
                                     .toList()
                                     .join('\n'),
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontStyle: FontStyle.italic, fontSize: 14),
+                                style: TextStyle(fontStyle: FontStyle.italic, fontSize: 14),
                               ),
                             )
                           : Container(),
@@ -216,9 +204,7 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                                 Icon(Icons.warning, color: Colors.red),
                                 Text(
                                   message,
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontWeight: FontWeight.bold),
+                                  style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
                                 ),
                               ],
                             )
@@ -232,18 +218,12 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                           FlatButton(
                             onPressed: Navigator.of(context).pop,
                             child: Text('Cancel',
-                                style: TextStyle(
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.bold)),
+                                style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
                           ),
                           FlatButton(
                             onPressed: () async {
-                              DateTime returnDate = DateTime(
-                                  dayPick.year,
-                                  dayPick.month,
-                                  dayPick.day,
-                                  timePick.hour,
-                                  timePick.minute);
+                              DateTime returnDate = DateTime(dayPick.year, dayPick.month,
+                                  dayPick.day, timePick.hour, timePick.minute);
                               if (stops == null || stops.length <= 0) {
                                 setState(() {
                                   message = 'Select a stop';
@@ -254,15 +234,13 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                                 });
                               } else {
                                 Navigator.of(context).pop();
-                                writeReminder(Reminder(returnDate, stops,
-                                        Random().nextInt(pow(10, 6))))
+                                writeReminder(
+                                        Reminder(returnDate, stops, Random().nextInt(pow(10, 6))))
                                     .then((_) => updateReminders());
                               }
                             },
                             child: Text('Add',
-                                style: TextStyle(
-                                    color: Colors.blue,
-                                    fontWeight: FontWeight.bold)),
+                                style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
                           )
                         ],
                       ),
@@ -293,18 +271,6 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
       reminders = nReminders;
     });
   }
-  // ? Keep This
-  // void showNotification() async {
-  //   var android = AndroidNotificationDetails(
-  //     '01234',
-  //     'Instant Notifications',
-  //     'Notifies the user when Button Pressed',
-  //   );
-  //   var iOS = IOSNotificationDetails();
-  //   var platform = NotificationDetails(android, iOS);
-  //   await flutterLocalNotificationsPlugin.show(
-  //       0, 'Bus Notifier', 'The bus will arrive in some time', platform);
-  // }
 
   void scheduleNotification(Reminder reminder) async {
     var android = AndroidNotificationDetails(
@@ -349,24 +315,76 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
     return returnList;
   }
 
-  Future<void> onSelectNotification(String payload) async {
-    Reminder reminder = Reminder.fromMap(json.decode(payload));
+  Future<void> second(String payload) async {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            title: Text('Bus Time Notifier'),
+            contentPadding: EdgeInsets.symmetric(horizontal: 24),
+            content: FutureBuilder(
+                builder:
+                    (BuildContext context, AsyncSnapshot<Map<String, List<dynamic>>> snapshot) {
+                  if (snapshot.hasError)
+                    return Center(child: Icon(Icons.warning, color: Colors.red));
+                  else if ((snapshot.connectionState == ConnectionState.done ||
+                          snapshot.connectionState == ConnectionState.active) &&
+                      snapshot.hasData)
+                    return snapshot.data.isNotEmpty
+                        ? Table(
+                            children: List.generate(4, (i) => i - 1).map((int i) {
+                              if (i == -1) {
+                                return TableRow(
+                                    children: Reminder.fromMap(json.decode(payload))
+                                        .stops
+                                        .map<Widget>((Stop stop) =>
+                                            Text(stop.route + ', ' + stop.name, maxLines: 2))
+                                        .toList());
+                              }
+                              return TableRow(
+                                  children: snapshot.data.keys.map((String stopName) {
+                                TimeOfDay time;
+                                try {
+                                  time = snapshot.data[stopName][i];
+                                  return Text(time.format(context));
+                                } catch (_) {
+                                  return Text('.');
+                                }
+                              }).toList());
+                            }).toList(),
+                          )
+                        : Text('Invalid ');
+                  else
+                    return Center(child: CircularProgressIndicator());
+                },
+                future: getStopTimes(Reminder.fromMap(json.decode(payload)))),
+            actions: <Widget>[
+              FlatButton(child: Text('Ok'), onPressed: () => Navigator.of(context).pop())
+            ],
+          );
+        });
+  }
+
+  Future<Map<String, List>> getStopTimes(Reminder reminder) async {
     Map<String, List> times = Map();
     for (Stop stop in reminder.stops) {
       times[stop.name] = await getTimes(stop);
     }
+    return times;
+  }
 
-    // reminder.stops.forEach((Stop stop) async {
-    //   times[stop.name] = await getTimes(stop);
-    // });
+  Future<void> onSelectNotification(String payload) async {
+    Reminder reminder = Reminder.fromMap(json.decode(payload));
+    Map<String, List> times = await getStopTimes(reminder);
     bool isValid = times.isNotEmpty;
     showDialog(
         barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             title: Text('Bus Time Notifier'),
             contentPadding: EdgeInsets.symmetric(horizontal: 24),
             content: isValid
@@ -375,9 +393,8 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                       if (i == -1) {
                         return TableRow(
                             children: reminder.stops
-                                .map<Widget>((Stop stop) => Text(
-                                    stop.route + ', ' + stop.name,
-                                    maxLines: 2))
+                                .map<Widget>(
+                                    (Stop stop) => Text(stop.route + ', ' + stop.name, maxLines: 2))
                                 .toList());
                       }
                       return TableRow(
@@ -404,30 +421,21 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
             //       )
             //     : Text('Invalid reminder'),
             actions: <Widget>[
-              FlatButton(
-                  child: Text('Ok'),
-                  onPressed: () => Navigator.of(context).pop())
+              FlatButton(child: Text('Ok'), onPressed: () => Navigator.of(context).pop())
             ],
           );
         });
   }
 
-  Future onDidReceiveLocalNotification(
-      int id, String title, String body, String payload) async {
+  Future onDidReceiveLocalNotification(int id, String title, String body, String payload) async {
     // display a dialog with the notification details, tap ok to go to another page
     showDialog(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
-            title: Text(title),
-            content: Text(body),
-            actions: [
-              CupertinoDialogAction(
-                isDefaultAction: true,
-                child: Text('Ok'),
-                onPressed: null
-              )
-            ],
-          ),
+        title: Text(title),
+        content: Text(body),
+        actions: [CupertinoDialogAction(isDefaultAction: true, child: Text('Ok'), onPressed: null)],
+      ),
     );
   }
 
@@ -488,19 +496,13 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                                   ),
                                 ),
                                 child: Container(
-                                  margin: EdgeInsets.symmetric(
-                                      vertical: 4, horizontal: 8),
+                                  margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(20),
                                       gradient: LinearGradient(
-                                          colors: (reminders[index]
-                                                  .time
-                                                  .isBefore(DateTime.now()))
+                                          colors: (reminders[index].time.isBefore(DateTime.now()))
                                               ? [Colors.red, Colors.white]
-                                              : [
-                                                  Colors.deepOrangeAccent,
-                                                  Colors.orange
-                                                ])
+                                              : [Colors.deepOrangeAccent, Colors.orange])
                                       // color: (reminders[index].time.isBefore(DateTime.now()))
                                       // ? Colors.red[200]
                                       // : Colors.white,
@@ -508,34 +510,26 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                                   child: Padding(
                                     padding: EdgeInsets.all(12),
                                     child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.stretch,
                                       children: <Widget>[
                                         Text(
                                             DateFormat(
                                                     "EEEE MMMM dd 'at' hh:mm a '(${reminders[index].stops.length})'")
                                                 .format(reminders[index].time),
-                                            style:
-                                                TextStyle(color: Colors.white)),
+                                            style: TextStyle(color: Colors.white)),
                                         reminders[index].stops.length == 1
                                             ? Text(
                                                 reminders[index].stops[0].name,
                                                 style: TextStyle(
-                                                    color: Colors.grey[200],
-                                                    fontSize: 13),
+                                                    color: Colors.grey[200], fontSize: 13),
                                               )
                                             : Container(),
                                         Text(
                                             reminders[index].stops.length == 1
-                                                ? reminders[index]
-                                                        .stops[0]
-                                                        .route +
+                                                ? reminders[index].stops[0].route +
                                                     ' towards ' +
-                                                    reminders[index]
-                                                        .stops[0]
-                                                        .destination
+                                                    reminders[index].stops[0].destination
                                                 : reminders[index]
                                                     .stops
                                                     .map((Stop stop) {
@@ -545,17 +539,14 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
                                                     .join('\n'),
                                             // maxLines:
                                             //     reminders[index].stops.length,
-                                            style: TextStyle(
-                                                color: Colors.grey[200],
-                                                fontSize: 13))
+                                            style: TextStyle(color: Colors.grey[200], fontSize: 13))
                                       ],
                                     ),
                                   ),
                                 ),
                                 //
                                 direction: DismissDirection.startToEnd,
-                                onDismissed:
-                                    (DismissDirection direction) async {
+                                onDismissed: (DismissDirection direction) async {
                                   await deleteReminder(index);
                                   print('Reminder removed');
                                   updateReminders();
@@ -569,8 +560,8 @@ class _BusNotifierPageState extends State<BusNotifierPage> {
               ),
             ),
       // ****************************************
-      floatingActionButton: FloatingActionButton(
-          onPressed: () => createReminder(context), child: Icon(Icons.add)),
+      floatingActionButton:
+          FloatingActionButton(onPressed: () => createReminder(context), child: Icon(Icons.add)),
     );
   }
 }
