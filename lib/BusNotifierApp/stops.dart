@@ -1993,5 +1993,537 @@ List<Map<String, String>> stops = [
             "route": "41A",
             "direction": "O",
             "destination": "North Point Ferry Pier"
+        },
+        {
+            "Stop Id": "002305",
+            "Stop Name": "Stanley Prison, Tung Tau Wan Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002302",
+            "Stop Name": "St. Stephen's College, Tung Tau Wan Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002277",
+            "Stop Name": "Stanley Village",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002278",
+            "Stop Name": "Stanley Mound Road, Stanley Village Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002279",
+            "Stop Name": "Stanley Beach Road, Stanley Village Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002273",
+            "Stop Name": "Stanley Gap Road Interchange, Stanley Gap Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002270",
+            "Stop Name": "Stanley Gap Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002271",
+            "Stop Name": "Wilson Trail, Stanley Gap Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002272",
+            "Stop Name": "Headland Road, Repulse Bay Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002380",
+            "Stop Name": "102 Repulse Bay Road, Repulse Bay Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002242",
+            "Stop Name": "90 Repulse Bay Road, Repulse Bay Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002257",
+            "Stop Name": "Repulse Bay Villas, Repulse Bay Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002241",
+            "Stop Name": "Repulse Bay Beach, Repulse Bay Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002251",
+            "Stop Name": "Belleview Drive, Repulse Bay Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002196",
+            "Stop Name": "Island Club, Island Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002198",
+            "Stop Name": "Deepdene, Island Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002197",
+            "Stop Name": "Deep Water Bay, Island Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002349",
+            "Stop Name": "Hong Kong Country Club, Wong Chuk Hang Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002352",
+            "Stop Name": "Wong Chuk Hang San Wai, Wong Chuk Hang Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002354",
+            "Stop Name": "Wong Chuk Hang Sports Centre, Wong Chuk Hang Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002355",
+            "Stop Name": "Wong Chuk Hang Recreation Ground, Wong Chuk Hang Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002357",
+            "Stop Name": "Nam Long Shan Road, Wong Chuk Hang Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002358",
+            "Stop Name": "Victory Factory Building, Wong Chuk Hang Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002160",
+            "Stop Name": "Ocean Court, Aberdeen Praya Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002161",
+            "Stop Name": "Aberdeen Promenade, Aberdeen Praya Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002162",
+            "Stop Name": "Aberdeen Wholesale Fish Market, Aberdeen Praya Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002163",
+            "Stop Name": "Tin Wan Street, Aberdeen Praya Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002333",
+            "Stop Name": "Wah Lok House Wah Fu Estate, Wah Fu Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002334",
+            "Stop Name": "Wah Fu Commercial Complex, Wah Fu Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002335",
+            "Stop Name": "Wah Ching House Wah Fu Estate, Wah Fu Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002336",
+            "Stop Name": "Pui Ying Secondary School, Wah Fu Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002338",
+            "Stop Name": "Wah Fu (North)",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002329",
+            "Stop Name": "Victoria Road Zone Sub-station, Victoria Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002696",
+            "Stop Name": "Bel-Air on the Peak, Cyberport Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002391",
+            "Stop Name": "Residence Bel-Air, Cyberport Road",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002392",
+            "Stop Name": "Cyberport",
+            "Route": "73",
+            "Direction": "I",
+            "Destination": "Cyberport / Wah Fu (North)"
+        },
+        {
+            "Stop Id": "002392",
+            "Stop Name": "Cyberport",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002393",
+            "Stop Name": "Cyberport 3, Cyberport Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002394",
+            "Stop Name": "Residence Bel-Air, Cyberport Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002697",
+            "Stop Name": "Bel-Air on the Peak, Cyberport Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002317",
+            "Stop Name": "Victoria Road Zone Sub-station, Victoria Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002338",
+            "Stop Name": "Wah Fu (North)",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002339",
+            "Stop Name": "Wah Sang House Wah Fu Estate, Wah Fu Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002340",
+            "Stop Name": "Wah Tai House Wah Fu Estate, Wah Fu Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002342",
+            "Stop Name": "Wah On House Wah Fu Estate, Wah Fu Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002388",
+            "Stop Name": "Tin Wan Street, Shek Pai Wan Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002157",
+            "Stop Name": "St. Peter's Church, Aberdeen Main Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002158",
+            "Stop Name": "Yue Fai Road, Aberdeen Main Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002159",
+            "Stop Name": "Yip Yee Mansion, Aberdeen Main Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002344",
+            "Stop Name": "Yan's Tower, Wong Chuk Hang Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002383",
+            "Stop Name": "Yip Hing Street, Wong Chuk Hang Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002345",
+            "Stop Name": "Wong Chuk Hang Recreation Ground, Wong Chuk Hang Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002346",
+            "Stop Name": "Grantham Hospital, Wong Chuk Hang Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002350",
+            "Stop Name": "Wong Chuk Hang San Wai, Wong Chuk Hang Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002351",
+            "Stop Name": "Hong Kong Country Club, Wong Chuk Hang Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002201",
+            "Stop Name": "Deep Water Bay, Island Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002199",
+            "Stop Name": "Deepdene, Island Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002200",
+            "Stop Name": "Island Club, Island Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002247",
+            "Stop Name": "Belleview Drive, Repulse Bay Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002252",
+            "Stop Name": "Repulse Bay Beach, Repulse Bay Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002248",
+            "Stop Name": "Repulse Bay Towers, Repulse Bay Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002256",
+            "Stop Name": "127 Repulse Bay Road, Repulse Bay Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002267",
+            "Stop Name": "Headland Road, Repulse Bay Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002274",
+            "Stop Name": "Chung Hom Kok Road, Stanley Gap Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002268",
+            "Stop Name": "Wilson Trail, Stanley Gap Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002379",
+            "Stop Name": "Stanley Gap Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002269",
+            "Stop Name": "Stanley Mound Pumping Station, Stanley Gap Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002266",
+            "Stop Name": "Stanley Gap Road Interchange, Stanley Gap Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002280",
+            "Stop Name": "Stanford Villa, Stanley Village Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002276",
+            "Stop Name": "Stanley Court, Stanley Village Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002281",
+            "Stop Name": "Stanley Village, Stanley Village Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002303",
+            "Stop Name": "Hong Kong Sea School, Tung Tau Wan Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002304",
+            "Stop Name": "St. Stephen's College, Tung Tau Wan Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002305",
+            "Stop Name": "Stanley Prison, Tung Tau Wan Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002302",
+            "Stop Name": "St. Stephen's College, Tung Tau Wan Road",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
+        },
+        {
+            "Stop Id": "002277",
+            "Stop Name": "Stanley Village",
+            "Route": "73",
+            "Direction": "O",
+            "Destination": "Stanley Market"
         }
     ];
